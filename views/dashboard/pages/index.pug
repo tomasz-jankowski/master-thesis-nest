@@ -1,0 +1,447 @@
+extends ../base
+
+append content
+    .wrapper
+        nav.main-header.navbar.navbar-expand.navbar-white.navbar-light
+            ul.navbar-nav
+                li.nav-item
+                    a.nav-link(data-widget='pushmenu' href='#' role='button')
+                        i.fas.fa-bars
+            ul.navbar-nav.ml-auto
+                li.nav-item.dropdown.user-menu
+                    a.nav-link(href='#' data-toggle='dropdown')
+                        span.d-none.d-md-inline= `Zalogowany jako: data.user.name`
+                    ul.dropdown-menu.dropdown-menu-lg.dropdown-menu-end
+                        li.user-body.text-center.bg-primary
+                            h5 data.user.name
+
+                        li.user-body
+                            .row
+                                .col-6.text-center
+                                    a.btn.btn-warning(href='#') Edytuj profil
+                                .col-6.text-center
+                                    a.btn.btn-danger(href='#') Wyloguj się
+
+        aside.main-sidebar.sidebar-light-primary.elevation-4
+            a.brand-link.bg-dark.text-center(href='/')
+                span.brand-text.font-weight-light Panel administracyjny
+            .sidebar
+                nav.mt-2
+                    ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+                        li.nav-item
+                            a.nav-link.active(href='/')
+                                i.fas.flaticon.fa-home.align-middle
+                                p.ml-2 Strona główna
+
+                        li.nav-header ZARZĄDZANIE
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.flaticon.flaticon-drone.align-middle
+                                    p.ml-2 Stacje pomiarowe
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.flaticon.flaticon-data.align-middle
+                                    p.ml-2 Pomiary
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.flaticon.flaticon-user.align-middle
+                                    p.ml-2 Użytkownicy
+
+                nav.mt-2
+                    ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+                        li.nav-header POBERANIE DANYCH
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 Stacje pomiarowe
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 Airly
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 Główny Inspektorat Ochrony Środowiska
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 AirNow
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 AQI
+                            li.nav-item
+                                a.nav-link(href='')
+                                    i.far.fa-dot-circle
+                                    p.ml-2 OpenWeather
+
+        .content-wrapper
+            .content-header
+                .container-fluid
+                    .row.mb-2
+                        .col-sm-6
+                            h1.m-0 Panel administracyjny
+                        .col-sm-6
+                            ol.breadcrumb.float-sm-right
+                                //li.breadcrumb-item
+                                //    a(href='#') Home
+                                li.breadcrumb-item.active Strona główna
+            section.content
+                .container-fluid
+                    .row
+                        .col-lg-3.col-6
+                            .small-box.bg-info
+                                .inner
+                                    h3 150
+                                    p New Orders
+                                .icon
+                                    i.ion.ion-bag
+                                a.small-box-footer(href='#')
+                                    | More info
+                                    i.fas.fa-arrow-circle-right
+                        .col-lg-3.col-6
+                            .small-box.bg-success
+                                .inner
+                                    h3
+                                        | 53
+                                        sup(style='font-size: 20px') %
+                                    p Bounce Rate
+                                .icon
+                                    i.ion.ion-stats-bars
+                                a.small-box-footer(href='#')
+                                    | More info
+                                    i.fas.fa-arrow-circle-right
+                        .col-lg-3.col-6
+                            .small-box.bg-warning
+                                .inner
+                                    h3 44
+                                    p User Registrations
+                                .icon
+                                    i.ion.ion-person-add
+                                a.small-box-footer(href='#')
+                                    | More info
+                                    i.fas.fa-arrow-circle-right
+                        .col-lg-3.col-6
+                            .small-box.bg-danger
+                                .inner
+                                    h3 65
+                                    p Unique Visitors
+                                .icon
+                                    i.ion.ion-pie-graph
+                                a.small-box-footer(href='#')
+                                    | More info
+                                    i.fas.fa-arrow-circle-right
+                    .row
+                        section.col-lg-7.connectedSortable
+                            .card
+                                .card-header
+                                    h3.card-title
+                                        i.fas.fa-chart-pie.mr-1
+                                        |                   Sales
+                                    .card-tools
+                                        ul.nav.nav-pills.ml-auto
+                                            li.nav-item
+                                                a.nav-link.active(href='#revenue-chart' data-toggle='tab') Area
+                                            li.nav-item
+                                                a.nav-link(href='#sales-chart' data-toggle='tab') Donut
+                                .card-body
+                                    .tab-content.p-0
+                                        #revenue-chart.chart.tab-pane.active(style='position: relative; height: 300px;')
+                                            canvas#revenue-chart-canvas(height='300' style='height: 300px;')
+                                        #sales-chart.chart.tab-pane(style='position: relative; height: 300px;')
+                                            canvas#sales-chart-canvas(height='300' style='height: 300px;')
+                            .card.direct-chat.direct-chat-primary
+                                .card-header
+                                    h3.card-title Direct Chat
+                                    .card-tools
+                                        span.badge.badge-primary(title='3 New Messages') 3
+                                        button.btn.btn-tool(type='button' data-card-widget='collapse')
+                                            i.fas.fa-minus
+                                        button.btn.btn-tool(type='button' title='Contacts' data-widget='chat-pane-toggle')
+                                            i.fas.fa-comments
+                                        button.btn.btn-tool(type='button' data-card-widget='remove')
+                                            i.fas.fa-times
+                                .card-body
+                                    .direct-chat-messages
+                                        .direct-chat-msg
+                                            .direct-chat-infos.clearfix
+                                                span.direct-chat-name.float-left Alexander Pierce
+                                                span.direct-chat-timestamp.float-right 23 Jan 2:00 pm
+                                            img.direct-chat-img(src='/images/logo.svg' alt='message user image')
+                                            .direct-chat-text
+                                                | Is this template really for free? That&apos;s unbelievable!
+                                        .direct-chat-msg.right
+                                            .direct-chat-infos.clearfix
+                                                span.direct-chat-name.float-right Sarah Bullock
+                                                span.direct-chat-timestamp.float-left 23 Jan 2:05 pm
+                                            img.direct-chat-img(src='/images/logo.svg' alt='message user image')
+                                            .direct-chat-text
+                                                | You better believe it!
+                                        .direct-chat-msg
+                                            .direct-chat-infos.clearfix
+                                                span.direct-chat-name.float-left Alexander Pierce
+                                                span.direct-chat-timestamp.float-right 23 Jan 5:37 pm
+                                            img.direct-chat-img(src='/images/logo.svg' alt='message user image')
+                                            .direct-chat-text
+                                                | Working with AdminLTE on a great new app! Wanna join?
+                                        .direct-chat-msg.right
+                                            .direct-chat-infos.clearfix
+                                                span.direct-chat-name.float-right Sarah Bullock
+                                                span.direct-chat-timestamp.float-left 23 Jan 6:10 pm
+                                            img.direct-chat-img(src='/images/logo.svg' alt='message user image')
+                                            .direct-chat-text
+                                                | I would love to.
+                                    .direct-chat-contacts
+                                        ul.contacts-list
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | Count Dracula
+                                                            small.contacts-list-date.float-right 2/28/2015
+                                                        span.contacts-list-msg How have you been? I was...
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | Sarah Doe
+                                                            small.contacts-list-date.float-right 2/23/2015
+                                                        span.contacts-list-msg I will be waiting for...
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | Nadia Jolie
+                                                            small.contacts-list-date.float-right 2/20/2015
+                                                        span.contacts-list-msg I&apos;ll call you back at...
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | Nora S. Vans
+                                                            small.contacts-list-date.float-right 2/10/2015
+                                                        span.contacts-list-msg Where is your new...
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | John K.
+                                                            small.contacts-list-date.float-right 1/27/2015
+                                                        span.contacts-list-msg Can I take a look at...
+                                            li
+                                                a(href='#')
+                                                    img.contacts-list-img(src='/images/logo.svg' alt='User Avatar')
+                                                    .contacts-list-info
+                                                        span.contacts-list-name
+                                                            | Kenneth M.
+                                                            small.contacts-list-date.float-right 1/4/2015
+                                                        span.contacts-list-msg Never mind I found...
+                                .card-footer
+                                    form(action='#' method='post')
+                                        .input-group
+                                            input.form-control(type='text' name='message' placeholder='Type Message ...')
+                                            span.input-group-append
+                                                button.btn.btn-primary(type='button') Send
+                            .card
+                                .card-header
+                                    h3.card-title
+                                        i.ion.ion-clipboard.mr-1
+                                        |                   To Do List
+                                    .card-tools
+                                        ul.pagination.pagination-sm
+                                            li.page-item
+                                                a.page-link(href='#') &laquo;
+                                            li.page-item
+                                                a.page-link(href='#') 1
+                                            li.page-item
+                                                a.page-link(href='#') 2
+                                            li.page-item
+                                                a.page-link(href='#') 3
+                                            li.page-item
+                                                a.page-link(href='#') &raquo;
+                                .card-body
+                                    ul.todo-list(data-widget='todo-list')
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck1(type='checkbox' value='' name='todo1')
+                                                label(for='todoCheck1')
+                                            span.text Design a nice theme
+                                            small.badge.badge-danger
+                                                i.far.fa-clock
+                                                |  2 mins
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck2(type='checkbox' value='' name='todo2' checked='')
+                                                label(for='todoCheck2')
+                                            span.text Make the theme responsive
+                                            small.badge.badge-info
+                                                i.far.fa-clock
+                                                |  4 hours
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck3(type='checkbox' value='' name='todo3')
+                                                label(for='todoCheck3')
+                                            span.text Let theme shine like a star
+                                            small.badge.badge-warning
+                                                i.far.fa-clock
+                                                |  1 day
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck4(type='checkbox' value='' name='todo4')
+                                                label(for='todoCheck4')
+                                            span.text Let theme shine like a star
+                                            small.badge.badge-success
+                                                i.far.fa-clock
+                                                |  3 days
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck5(type='checkbox' value='' name='todo5')
+                                                label(for='todoCheck5')
+                                            span.text Check your messages and notifications
+                                            small.badge.badge-primary
+                                                i.far.fa-clock
+                                                |  1 week
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                        li
+                                            span.handle
+                                                i.fas.fa-ellipsis-v
+                                                i.fas.fa-ellipsis-v
+                                            .icheck-primary.d-inline.ml-2
+                                                input#todoCheck6(type='checkbox' value='' name='todo6')
+                                                label(for='todoCheck6')
+                                            span.text Let theme shine like a star
+                                            small.badge.badge-secondary
+                                                i.far.fa-clock
+                                                |  1 month
+                                            .tools
+                                                i.fas.fa-edit
+                                                i.fas.fa-trash-o
+                                .card-footer.clearfix
+                                    button.btn.btn-primary.float-right(type='button')
+                                        i.fas.fa-plus
+                                        |  Add item
+                        section.col-lg-5.connectedSortable
+                            .card.bg-gradient-primary
+                                .card-header.border-0
+                                    h3.card-title
+                                        i.fas.fa-map-marker-alt.mr-1
+                                        |                   Visitors
+                                    .card-tools
+                                        button.btn.btn-primary.btn-sm.daterange(type='button' title='Date range')
+                                            i.far.fa-calendar-alt
+                                        button.btn.btn-primary.btn-sm(type='button' data-card-widget='collapse' title='Collapse')
+                                            i.fas.fa-minus
+                                .card-body
+                                    #world-map(style='height: 250px; width: 100%;')
+                                .card-footer.bg-transparent
+                                    .row
+                                        .col-4.text-center
+                                            #sparkline-1
+                                            .text-white Visitors
+                                        .col-4.text-center
+                                            #sparkline-2
+                                            .text-white Online
+                                        .col-4.text-center
+                                            #sparkline-3
+                                            .text-white Sales
+                            .card.bg-gradient-info
+                                .card-header.border-0
+                                    h3.card-title
+                                        i.fas.fa-th.mr-1
+                                        |                   Sales Graph
+                                    .card-tools
+                                        button.btn.bg-info.btn-sm(type='button' data-card-widget='collapse')
+                                            i.fas.fa-minus
+                                        button.btn.bg-info.btn-sm(type='button' data-card-widget='remove')
+                                            i.fas.fa-times
+                                .card-body
+                                    canvas#line-chart.chart(style='min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;')
+                                .card-footer.bg-transparent
+                                    .row
+                                        .col-4.text-center
+                                            input.knob(type='text' data-readonly='true' value='20' data-width='60' data-height='60' data-fgcolor='#39CCCC')
+                                            .text-white Mail-Orders
+                                        .col-4.text-center
+                                            input.knob(type='text' data-readonly='true' value='50' data-width='60' data-height='60' data-fgcolor='#39CCCC')
+                                            .text-white Online
+                                        .col-4.text-center
+                                            input.knob(type='text' data-readonly='true' value='30' data-width='60' data-height='60' data-fgcolor='#39CCCC')
+                                            .text-white In-Store
+                            .card.bg-gradient-success
+                                .card-header.border-0
+                                    h3.card-title
+                                        i.far.fa-calendar-alt
+                                        |                   Calendar
+                                    .card-tools
+                                        .btn-group
+                                            button.btn.btn-success.btn-sm.dropdown-toggle(type='button' data-toggle='dropdown' data-offset='-52')
+                                                i.fas.fa-bars
+                                            .dropdown-menu(role='menu')
+                                                a.dropdown-item(href='#') Add new event
+                                                a.dropdown-item(href='#') Clear events
+                                                .dropdown-divider
+                                                a.dropdown-item(href='#') View calendar
+                                        button.btn.btn-success.btn-sm(type='button' data-card-widget='collapse')
+                                            i.fas.fa-minus
+                                        button.btn.btn-success.btn-sm(type='button' data-card-widget='remove')
+                                            i.fas.fa-times
+                                .card-body.pt-0
+                                    #calendar(style='width: 100%')
+        footer.main-footer
+            strong
+                | Copyright &copy; 2014-2021
+                a(href='https://adminlte.io')  AdminLTE.io
+                | .
+            |     All rights reserved.
+
+            div
+                | Icons made by
+                a(href='https://www.freepik.com' title='Freepik')  Freepik
+                |  from
+                a(href='https://www.flaticon.com/' title='Flaticon')  www.flaticon.com
+            div
+                | Icons made by
+                a(href='https://www.flaticon.com/authors/pixel-perfect' title='Pixel perfect')  Pixel perfect
+                |  from
+                a(href='https://www.flaticon.com/' title='Flaticon')  www.flaticon.com
+            div
+                | Icons made by
+                a(href='https://www.flaticon.com/authors/monkik' title='monkik')  monkik
+                |  from
+                a(href='https://www.flaticon.com/' title='Flaticon')  www.flaticon.com
+
+        aside.control-sidebar.control-sidebar-dark

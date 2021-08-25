@@ -7,6 +7,7 @@ import { StationsModule } from './stations/stations.module';
 import TypeOrmConfig from './common/config/typeorm.config';
 import { Measurement } from './measurements/measurement.entity';
 import { Station } from './stations/station.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Station } from './stations/station.entity';
     }),
     MeasurementsModule,
     StationsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
