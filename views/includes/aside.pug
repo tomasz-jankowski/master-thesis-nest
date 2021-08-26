@@ -1,0 +1,52 @@
+aside.main-sidebar.sidebar-light-primary
+    a.brand-link.bg-dark.text-center(href='/')
+        span.brand-text.font-weight-light Panel administracyjny
+    .sidebar
+        nav.mt-2
+            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+                li.nav-item
+                    a.nav-link(href='/' class=(indexPage ? 'active' : ''))
+                        i.fas.flaticon.flaticon-home.align-middle
+                        p.ml-2 Strona główna
+
+                li.nav-header ZARZĄDZANIE
+                    li.nav-item
+                        a.nav-link(href='' class=(stationsPage ? 'active' : ''))
+                            i.flaticon.flaticon-drone.align-middle
+                            p.ml-2 Stacje pomiarowe
+                    li.nav-item
+                        a.nav-link(href='' class=(measurementsPage ? 'active' : ''))
+                            i.flaticon.flaticon-data.align-middle
+                            p.ml-2 Pomiary
+                    li.nav-item
+                        a.nav-link(href='' class=(usersPage ? 'active' : ''))
+                            i.flaticon.flaticon-user.align-middle
+                            p.ml-2 Użytkownicy
+
+        nav.mt-2
+            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+                li.nav-header POBERANIE DANYCH
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 Stacje pomiarowe
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 Airly
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 Główny Inspektorat Ochrony Środowiska
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 AirNow
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 AQI
+                    li.nav-item
+                        a.nav-link(href='')
+                            i.far.fa-dot-circle
+                            p.ml-2 OpenWeather

@@ -22,7 +22,7 @@ export class AuthExceptionFilter implements ExceptionFilter {
     ) {
       request.flash(
         'loginError',
-        'Wystąpił błąd! Może użytkownik czeka na weryfikację?',
+        'Błędny login i/lub hasło albo użytkownik oczekuje na weryfikację.',
       );
       response.redirect('/login');
     } else {

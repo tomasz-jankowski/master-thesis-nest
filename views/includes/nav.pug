@@ -1,0 +1,20 @@
+nav.main-header.navbar.navbar-expand.navbar-white.navbar-light
+    ul.navbar-nav
+        li.nav-item
+            a.nav-link(data-widget='pushmenu' href='#' role='button')
+                i.fas.fa-bars
+    ul.navbar-nav.ml-auto
+        li.nav-item.dropdown.user-menu
+            a.nav-link(href='#' data-toggle='dropdown')
+                span.d-none.d-md-inline= `Zalogowany jako: ${user.name}`
+            ul.dropdown-menu.dropdown-menu-lg.dropdown-menu-end
+                li.user-body.text-center.bg-primary
+                    h5= user.name
+                    h6 ( #{user.login} )
+
+                li.user-body
+                    .row
+                        .col-6.text-center
+                            a.btn.btn-warning(href='#') Edytuj profil
+                        .col-6.text-center
+                            a.btn.btn-danger(href='/logout') Wyloguj się

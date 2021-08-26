@@ -6,7 +6,9 @@ export class CreateUserDto {
   name!: string;
 
   @IsNotEmpty({ message: 'Login nie może być pusty.' })
-  @NotEquals('root')
+  @NotEquals('root', {
+    message: 'Nie można dodać użytkownika o loginie "root".',
+  })
   login!: string;
 
   @IsNotEmpty({ message: 'Hasło nie może być puste.' })

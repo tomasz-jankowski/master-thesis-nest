@@ -19,13 +19,21 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  // auth
   @UseGuards(AuthenticatedGuard)
   @Get()
   @Render('pages/index')
   async index(@Request() req) {
     const stations = await this.appService.getStations();
+    const measurements = await this.appService.getMeasurements();
     const users = await this.appService.getUsers();
-    return { title: 'Strona główna', stations, users, user: req.user };
+    return {
+      title: 'Strona główna',
+      stations,
+      measurements,
+      users,
+      user: req.user,
+    };
   }
 
   @Get('login')
@@ -45,9 +53,9 @@ export class AppController {
   }
 
   @Get('register')
-  @Render('pages/register')
-  register() {
-    return { title: 'Rejestracja' };
+  register(@Request() req, @Res() res: Response) {
+    if (req.user) return res.redirect('/');
+    else return res.render('pages/register', { title: 'Rejestracja' });
   }
 
   @UseGuards(AuthenticatedGuard)
@@ -56,4 +64,6 @@ export class AppController {
     req.logout();
     res.redirect('/login');
   }
+
+  // stations
 }

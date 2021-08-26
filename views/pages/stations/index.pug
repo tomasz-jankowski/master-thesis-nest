@@ -1,7 +1,7 @@
-extends ../base
+extends ../../base
 
 prepend content
-    - var indexPage = true;
+  - var stationsPage = true;
 
 append content
     .content-wrapper
@@ -12,9 +12,9 @@ append content
                         h1.m-0 Panel administracyjny
                     .col-sm-6
                         ol.breadcrumb.float-sm-right
-                            //li.breadcrumb-item
-                            //    a(href='/') Panel administracyjny
-                            li.breadcrumb-item.active Strona główna
+                            li.breadcrumb-item
+                                a(href='/') Panel administracyjny
+                            li.breadcrumb-item.active Stacje pomiarowe
         section.content
             .container-fluid
                 .row
