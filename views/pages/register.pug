@@ -1,0 +1,85 @@
+extends ../base
+
+append content
+    .hold-transition.register-page.text-center
+        .register-box
+            .card.card-outline.card-primary
+                .card-header.text-center
+                    span.h2 Panel administracyjny
+                .card-body
+                    p.login-box-msg REJESTRACJA
+                    form
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-signature
+                            input.form-control(type='text' autocomplete="name" name='name' placeholder=' imię i nazwisko' required)
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-user
+                            input.form-control(type='text' autocomplete="username" name='login' placeholder=' login' required)
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-key
+                            input.form-control(type='password' autocomplete="new-password" id='password' name='password' placeholder=' hasło' required)
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-redo-alt
+                            input.form-control(type='password' autocomplete="new-password" id='passwordConfirm' name='passwordConfirm' placeholder=' powtórz hasło' required)
+                        span#message
+                        .row
+                            .col.text-center.mt-2.mb-3
+                                button.btn.btn-block.btn-primary(id='submit' type='submit')
+                                    | Zatwierdź
+                    p.mb-0
+                        a.text-center(href='login') Masz już konto? Zaloguj się.
+
+append body-files
+    script.
+        const form = $('form');
+
+        $('#password, #passwordConfirm').on('keyup', function() {
+          if ($('#password').val() === $('#passwordConfirm').val()) {
+            $('#message').html('');
+            $('#submit').prop('disabled', false);
+          } else {
+            $('#message').html('Not Matching').css('color', 'red');
+            $('#submit').prop('disabled', true);
+          }
+        });
+
+        form.on('submit', (event) => {
+          event.preventDefault();
+          const data = form.serialize();
+
+          toastr.options.fadeOut = 10000;
+
+          $.ajax({
+            url: '/users',
+            type: 'POST',
+            data,
+            success: (data) => {
+              if (data.message)
+                toastr.error(data.message);
+              else {
+                toastr.success('Utworzono konto. <br /> Proszę czekać na weryfikację.');
+                $(form)[0].reset();
+              }
+            },
+            error: (data) => {
+              let text = '';
+              const message = data.responseJSON.message;
+              if (typeof (message) === "string")
+                text += `<li>- ${message}</li>`;
+              else {
+                data.responseJSON.message.forEach(m => {
+                  text += `<li>- ${m}</li>`;
+                });
+              }
+              toastr.error(`Wystąpiły błędy: <ul class="list-unstyled">${text}</ul>`);
+            }
+          });
+        });

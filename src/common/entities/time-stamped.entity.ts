@@ -11,9 +11,6 @@ export abstract class TimeStampedEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  uniqueId: string;
-
   @UpdateDateColumn()
   updatedAt: Date;
 

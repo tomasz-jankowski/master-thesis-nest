@@ -4,6 +4,9 @@ import { Measurement } from '../measurements/measurement.entity';
 
 @Entity()
 export class Station extends TimeStampedEntity {
+  @Column({ unique: true })
+  uniqueId: string;
+
   @Column({ unique: true, nullable: true })
   uniqueName: string;
 

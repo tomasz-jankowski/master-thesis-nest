@@ -11,6 +11,6 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    response.render();
+    response.redirect('/');
   }
 }

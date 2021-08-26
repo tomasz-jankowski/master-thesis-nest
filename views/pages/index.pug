@@ -10,17 +10,18 @@ append content
             ul.navbar-nav.ml-auto
                 li.nav-item.dropdown.user-menu
                     a.nav-link(href='#' data-toggle='dropdown')
-                        span.d-none.d-md-inline= `Zalogowany jako: data.user.name`
+                        span.d-none.d-md-inline= `Zalogowany jako: ${user.name}`
                     ul.dropdown-menu.dropdown-menu-lg.dropdown-menu-end
                         li.user-body.text-center.bg-primary
-                            h5 data.user.name
+                            h5= user.name
+                            h6 ( #{user.username} )
 
                         li.user-body
                             .row
                                 .col-6.text-center
                                     a.btn.btn-warning(href='#') Edytuj profil
                                 .col-6.text-center
-                                    a.btn.btn-danger(href='#') Wyloguj się
+                                    a.btn.btn-danger(href='/logout') Wyloguj się
 
         aside.main-sidebar.sidebar-light-primary.elevation-4
             a.brand-link.bg-dark.text-center(href='/')

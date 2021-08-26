@@ -1,3 +1,7 @@
 .flaticon {
     font-size: 2rem;
 }
+
+.input-group-text > span {
+    width: 16px;
+}

@@ -1,0 +1,34 @@
+extends ../base
+
+append content
+    .hold-transition.login-page.text-center
+        .login-box
+            .card.card-outline.card-primary
+                .card-header.text-center
+                    span.h2 Panel administracyjny
+                .card-body
+                    p.login-box-msg LOGOWANIE
+                    form(action='/login' method='post')
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-user
+                            input.form-control(type='text' autocomplete='username' name='login' placeholder=' login')
+                        .input-group.mb-3
+                            .input-group-append
+                                .input-group-text
+                                    span.fas.fa-key
+                            input.form-control(type='password' autocomplete='current-password' name='password' placeholder=' hasło')
+                        .row
+                            .col.text-center.mt-2.mb-3
+                                button.btn.btn-block.btn-primary(type='submit')
+                                    | Zatwierdź
+                    p.mb-0
+                        a.text-center(href='register') Nie masz konta? Zarejestruj się.
+
+append body-files
+    script.
+       message="#{message}"
+
+      if(message)
+        toastr.error(message)
