@@ -49,7 +49,6 @@ export class MeasurementsService {
     const dataToSave = {};
 
     if (keys.length === values.length) {
-      dataToSave['uniqueId'] = uniqueId;
       dataToSave['station'] = await this.stationsService.findOrCreate(
         stationUniqueId,
       );
@@ -61,7 +60,8 @@ export class MeasurementsService {
         ),
       );
       dataToSave['pump'] = dataToSave['pump'] === 't';
-      dataToSave['uniqueId'] = `${stationUniqueId}:${uniqueId}`;
+      dataToSave['series'] = Number(uniqueId.slice(0, 2));
+      dataToSave['number'] = Number(uniqueId.slice(2));
       return await this.measurementsRepository.save(dataToSave);
     } else {
       throw new InternalServerErrorException();

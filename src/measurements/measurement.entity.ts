@@ -5,7 +5,10 @@ import { Station } from '../stations/station.entity';
 @Entity()
 export class Measurement extends TimeStampedEntity {
   @Column()
-  uniqueId: string;
+  series: number;
+
+  @Column()
+  number: number;
 
   @Column()
   date: Date;
@@ -67,6 +70,8 @@ export class Measurement extends TimeStampedEntity {
   @Column()
   quantityTVOC: number;
 
-  @ManyToOne((type) => Station, (station) => station.measurements, { onDelete: 'CASCADE' })
+  @ManyToOne((type) => Station, (station) => station.measurements, {
+    onDelete: 'CASCADE',
+  })
   station: Station;
 }
