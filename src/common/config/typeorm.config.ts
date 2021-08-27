@@ -6,6 +6,7 @@ const options: any = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   synchronize: process.env.DB_SYNC === 'true',
+  charset: 'utf8mb4_unicode_ci',
 };
 
 export default options;

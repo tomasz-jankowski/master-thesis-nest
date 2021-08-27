@@ -1,11 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { MeasurementsService } from './measurements.service';
 import { UpdateMeasurementDto } from './dto/update-measurement.dto';
+import { Public } from '../common/decorators/public.decorator';
 
-@Controller('measurements')
+@Controller('api/measurements')
 export class MeasurementsController {
   constructor(private readonly measurementsService: MeasurementsService) {}
 
+  @Public()
   @Post()
   async create(@Body() data, @Req() req) {
     return await this.measurementsService.create(data, req);

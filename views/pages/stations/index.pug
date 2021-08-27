@@ -1,52 +1,12 @@
 extends ../../base
 
-prepend content
+append head-files
+    link(rel='stylesheet' href='/css/flatpickr.min.css')
+
+prepend config
   - var stationsPage = true;
 
 append content
-    .content-wrapper
-        .content-header
-            .container-fluid
-                .row.mb-2
-                    .col-sm-6
-                        h1.m-0 Panel administracyjny
-                    .col-sm-6
-                        ol.breadcrumb.float-sm-right
-                            li.breadcrumb-item
-                                a(href='/') Panel administracyjny
-                            li.breadcrumb-item.active Stacje pomiarowe
-        section.content
-            .container-fluid
-                .row
-                    .col-lg-3.col-6
-                        a(href='stations')
-                            .small-box.bg-success
-                                .inner
-                                    h3= stations.filter(station => station.isActive).length
-                                    p Aktywnych stacji pomiarowych
-                                .icon
-                                    i.flaticon-drone
-                    .col-lg-3.col-6
-                        a(href='stations')
-                            .small-box.bg-olive
-                                .inner
-                                    h3= stations.filter(station => station.isRegistered).length
-                                    p Zarejestrowanych stacji pomiarowych
-                                .icon
-                                    i.flaticon-drone
-                    .col-lg-3.col-6
-                        a(href='measurements')
-                            .small-box.bg-info
-                                .inner
-                                    h3= measurements.length
-                                    p Pomiarów
-                                .icon
-                                    i.flaticon-data
-                    .col-lg-3.col-6
-                        a(href='users')
-                            .small-box.bg-warning
-                                .inner
-                                    h3= users.length
-                                    p Użytkowników
-                                .icon
-                                    i.flaticon-user
+    section.content
+        .container-fluid
+            .row

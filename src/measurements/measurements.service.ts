@@ -68,8 +68,8 @@ export class MeasurementsService {
     }
   }
 
-  findAll() {
-    return `This action returns all measurements`;
+  async findAll() {
+    return await this.measurementsRepository.find({ relations: ['station'] });
   }
 
   async findOne(id: number) {

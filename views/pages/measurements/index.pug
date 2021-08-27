@@ -1,0 +1,118 @@
+extends ../../base
+
+append head-files
+    link(rel='stylesheet' href='/css/flatpickr.min.css')
+    link(rel='stylesheet' href='/css/bootstrap-duallistbox.min.css')
+    link(rel='stylesheet' href='/css/leaflet.css')
+    link(rel='stylesheet' href='/css/leaflet-locationpicker.css')
+    link(rel='stylesheet' href='/css/buttons.dataTables.min.css')
+
+prepend config
+  - var measurementsPage = true;
+
+append content
+    section.content
+        .container-fluid
+            include includes/filter
+
+            .row
+                .col-md-12
+                    .card.collapsed-card
+                        .card-header.border-0(data-card-widget='collapse' title='Collapse')
+                            h3.card-title
+                                i.fas.fa-border-all.mr-1
+                                | Tabela z danymi
+                            .card-tools
+                                button.btn.btn-transparent.btn-sm(type='button' data-card-widget='collapse' title='Collapse')
+                                    i.fas.fa-plus
+                        .card-body.row
+                            #table_wrapper
+                                table.table.table-bordered.table-striped.col-12
+                                    thead
+                                        tr
+                                            th Stacja pomiarowa
+                                            th ID
+                                            th Data
+                                            th Szerokość geograficzna
+                                            th Długość geograficzna
+                                            th Wysokość bezwzględna
+                                            th Napięcie baterii [dV]
+                                            th Pompa włączona
+                                            th PM1 [µg/m3]
+                                            th PM2.5 [µg/m3]
+                                            th PM10 [µg/m3]
+                                            th L. dz. cz. > 0,3 µm/0,1 l
+                                            th L. dz. cz. > 0,5 µm/0,1 l
+                                            th L. dz. cz. > 1 µm/0,1 l
+                                            th L. dz. cz. > 2.5 µm/0,1 l
+                                            th L. dz. cz. > 5 µm/0,1 l
+                                            th L. dz. cz. > 10 µm/0,1 l
+                                            th HCHO [mg/m3]
+                                            th Temperatura [d℃]
+                                            th Wilgotność [‰]
+                                            th L. cz. CO2 [ppm]
+                                            th L. cz. TVOC [ppb]
+
+append body-files
+    include includes/filter-js
+    script(src='/js/jquery.dataTables.min.js')
+    script(src='/js/dataTables.bootstrap4.min.js')
+    script(src='/js/dataTables.responsive.min.js')
+    script(src='/js/responsive.bootstrap4.min.js')
+    script(src='/js/dataTables.buttons.min.js')
+    script(src='/js/buttons.bootstrap4.min.js')
+    script(src='/js/jszip.min.js')
+    script(src='/js/pdfmake.min.js')
+    script(src='/js/vfs_fonts.js')
+    script(src='/js/buttons.html5.min.js')
+    script(src='/js/buttons.print.min.js')
+    script(src='/js/buttons.colVis.min.js')
+    script.
+      window.onload = function() {
+        $.ajax({
+          type: 'GET',
+          url: '/api/measurements',
+          dataType: 'json',
+          success: ((obj, textstatus) => {
+            for (let o of obj) {
+              o.date = `${new Date(o.date).toLocaleDateString()} ${new Date(o.date).toLocaleTimeString()}`;
+              o.pump = (o.pump) ? 'tak' : 'nie';
+            }
+            $('table').DataTable({
+              searching: true,
+              responsive: true,
+              lengthChange: false,
+              autoWidth: false,
+              buttons: ["copy", "csv", "print", "colvis"],
+              data: obj,
+              columns: [
+                { "data": "station.id" },
+                { "data": "uniqueId" },
+                { "data": "date" },
+                { "data": "latitude" },
+                { "data": "longitude" },
+                { "data": "altitude" },
+                { "data": "batteryVoltage" },
+                { "data": "pump" },
+                { "data": "pm1" },
+                { "data": "pm25" },
+                { "data": "pm10" },
+                { "data": "quantity03" },
+                { "data": "quantity05" },
+                { "data": "quantity1" },
+                { "data": "quantity25" },
+                { "data": "quantity5" },
+                { "data": "quantity10" },
+                { "data": "hcho" },
+                { "data": "temperature" },
+                { "data": "humidity" },
+                { "data": "quantityCO2" },
+                { "data": "quantityTVOC" },
+              ]
+            }).buttons().container().appendTo($('table'));
+          }),
+          error: ((obj, textstatus) => {
+            alert(obj.msg);
+          })
+        })
+      }

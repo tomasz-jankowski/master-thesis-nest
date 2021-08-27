@@ -11,10 +11,13 @@ head
 body
     block active-item
 
-    block content
+    block config
         .wrapper
             include includes/nav
             include includes/aside
+            .content-wrapper
+                include includes/content-header
+                block content
 
     block body-files
         include includes/footer

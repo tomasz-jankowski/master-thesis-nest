@@ -58,7 +58,7 @@ append body-files
           toastr.options.fadeOut = 10000;
 
           $.ajax({
-            url: '/users',
+            url: '/api/users',
             type: 'POST',
             data,
             success: (data) => {
