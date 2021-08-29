@@ -1,0 +1,98 @@
+extends ../../base
+
+prepend config
+  - var measurementsPage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col.card.bg-transparent
+                    .card-header.border-0
+                        h3.card-title= title
+                    .card-body
+                        form
+                            .form-group
+                                label(for='series') Seria
+                                input.form-control(type='number' step=1 name='series' id='series' value=measurement.series)
+                            .form-group
+                                label(for='number') Numer
+                                input.form-control(type='number' step=1 name='number' id='number' value=measurement.number)
+                            .form-group
+                                label(for='date') Data
+                                input.form-control(type='text' name='date' id='date' value=`${measurement.date.toLocaleString()}`)
+                            .form-group
+                                label(for='latitude') Szerokość geograficzna
+                                input.form-control(type='number' step=0.0001 name='latitude' id='latitude' value=measurement.latitude)
+                            .form-group
+                                label(for='longitude') Długość geograficzna
+                                input.form-control(type='number' step=0.0001 name='longitude' id='longitude' value=measurement.longitude)
+                            .form-group
+                                label(for='altitude') Wysokość bezwzględna
+                                input.form-control(type='number' step=0.01 name='altitude' id='altitude' value=measurement.altitude)
+                            .form-group
+                                label(for='batteryVoltage') Napięcie baterii [V]
+                                input.form-control(type='number' step=1 name='batteryVoltage' id='batteryVoltage' value=measurement.batteryVoltage)
+                            .form-group
+                                label(for='pump') Pompa
+                                select.form-control(name='pump' id='pump')
+                                    if measurement.pump === true
+                                        option(value='true' selected) tak
+                                        option(value='false') nie
+                                    if measurement.pump === false
+                                        option(value='true') tak
+                                        option(value='false' selected) nie
+                            .form-group
+                                label(for='pm1') PM1 [µg/m3]
+                                input.form-control(type='number' step=1 name='pm1' id='pm1' value=measurement.pm1)
+                            .form-group
+                                label(for='pm25') PM2.5 [µg/m3]
+                                input.form-control(type='number' step=1 name='pm25' id='pm25' value=measurement.pm25)
+                            .form-group
+                                label(for='pm10') PM10 [µg/m3]
+                                input.form-control(type='number' step=1 name='pm10' id='pm10' value=measurement.pm10)
+                            .form-group
+                                label(for='quantity03') L. dz. cz. > 0,3 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity03' id='quantity03' value=measurement.quantity03)
+                            .form-group
+                                label(for='quantity05') L. dz. cz. > 0,5 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity05' id='quantity05' value=measurement.quantity05)
+                            .form-group
+                                label(for='quantity1') L. dz. cz. > 1 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity1' id='quantity1' value=measurement.quantity1)
+                            .form-group
+                                label(for='quantity25') L. dz. cz. > 2,5 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity25' id='quantity25' value=measurement.quantity25)
+                            .form-group
+                                label(for='quantity5') L. dz. cz. > 5 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity5' id='quantity5' value=measurement.quantity5)
+                            .form-group
+                                label(for='quantity10') L. dz. cz. > 10 µm/0,1 l
+                                input.form-control(type='number' step=1 name='quantity10' id='quantity10' value=measurement.quantity10)
+                            .form-group
+                                label(for='hcho') HCHO [mg/m3]
+                                input.form-control(type='number' step=1 name='hcho' id='hcho' value=measurement.hcho)
+                            .form-group
+                                label(for='temperature') Temperatura [℃]
+                                input.form-control(type='number' step=1 name='temperature' id='temperature' value=measurement.temperature)
+                            .form-group
+                                label(for='humidity') Wilgotność [%]
+                                input.form-control(type='number' step=1 name='humidity' id='humidity' value=measurement.humidity)
+                            .form-group
+                                label(for='quantityCO2') L. cz. CO2 [ppm]
+                                input.form-control(type='number' step=1 name='quantityCO2' id='quantityCO2' value=measurement.quantityCO2)
+                            .form-group
+                                label(for='quantityTVOC') L. cz. TVOC [ppb]
+                                input.form-control(type='number' step=1 name='quantityTVOC' id='quantityTVOC' value=measurement.quantityTVOC)
+                            button.btn.btn-primary Zatwierdź
+
+append body-files
+    script(src='/js/jquery.serializejson.js')
+    script.
+        const form = $('form');
+
+        form.on('submit', (event) => {
+          event.preventDefault();
+          const data = form.serializeJSON();
+          console.log(data);
+        })

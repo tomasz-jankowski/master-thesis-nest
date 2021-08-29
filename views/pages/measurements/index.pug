@@ -1,9 +1,18 @@
 extends ../../base
 
+append head-files
+    include includes/css
+
 prepend config
   - var measurementsPage = true;
 
 append content
     section.content
         .container-fluid
+            //include includes/filter
             include includes/table
+
+
+append body-files
+    //include includes/filter-js
+    include includes/table-js

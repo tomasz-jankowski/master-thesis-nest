@@ -33,6 +33,7 @@
     "class-validator": "^0.13.1",
     "connect-flash": "^0.1.1",
     "express-session": "^1.17.2",
+    "moment": "^2.29.1",
     "mysql2": "^2.3.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",

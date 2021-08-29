@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Get,
+  Param,
   Post,
   Render,
   Request,
@@ -15,6 +17,7 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
 import { Public } from './common/decorators/public.decorator';
 import { User } from './common/decorators/user.decorator';
 import { User as UserEntity } from './users/user.entity';
+import { MeasurementsFilterDto } from './measurements/dto/measurements-filter.dto';
 
 @Controller()
 @UseFilters(AuthExceptionFilter)
@@ -83,5 +86,23 @@ export class AppController {
     const measurements = await this.appService.getMeasurements();
     const stations = await this.appService.getStations();
     return { title: 'Pomiary', measurements, stations, user };
+  }
+
+  // @Post('measurements')
+  // @Render('pages/measurements/index')
+  // async measurementsFiltered(
+  //   @User() user: UserEntity,
+  //   @Body() filterDto?: MeasurementsFilterDto,
+  // ) {
+  //   const measurements = await this.appService.getMeasurements(filterDto);
+  //   const stations = await this.appService.getStations();
+  //   return { title: 'Pomiary', measurements, stations, user };
+  // }
+
+  @Get('measurements/:id')
+  @Render('pages/measurements/edit')
+  async editMeasurement(@Param('id') id: string, @User() user: UserEntity) {
+    const measurement = await this.appService.getMeasurement(+id);
+    return { title: `Edytuj pomiar ${id}`, measurement, user };
   }
 }

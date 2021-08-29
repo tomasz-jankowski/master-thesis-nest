@@ -13,7 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useGlobalGuards(new AuthenticatedGuard(reflector));
   app.useStaticAssets(join(__dirname, '..', 'public'));

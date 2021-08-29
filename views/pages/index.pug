@@ -39,3 +39,68 @@ append content
                                 p Zweryfikowanych użytkowników
                             .icon
                                 i.flaticon-user
+                .row
+                    if stations.filter(station => station.isRegistered && !station.isActive).length > 0
+                        .card.m-3
+                            .card-header.border-transparent
+                                h3.card-title Nieaktywne stacje pomiarowe
+                            .card-body
+                                .table-responsive
+                                    .table
+                                        table
+                                            thead
+                                                tr
+                                                    th ID
+                                                    th Numer stacji
+                                                    th Liczba pomiarów
+                                                    th Akcja
+                                            tbody
+                                              each station in stations.filter(station => station.isRegistered && !station.isActive)
+                                                  tr
+                                                    td= station.id
+                                                    td= station.uniqueId
+                                                    td= station.measurements.length
+                                                    td lol
+                .row
+                    if stations.filter(station => !station.isRegistered).length > 0
+                        .card.m-3
+                            .card-header.border-transparent
+                                h3.card-title Stacje pomiarowe czekające na rejestrację
+                            .card-body
+                                .table-responsive
+                                    .table
+                                        table
+                                            thead
+                                                tr
+                                                    th ID
+                                                    th Numer stacji
+                                                    th Liczba pomiarów
+                                                    th Akcja
+                                            tbody
+                                                each station in stations.filter(station => !station.isRegistered)
+                                                    tr
+                                                        td= station.id
+                                                        td= station.uniqueId
+                                                        td= station.measurements.length
+                                                        td lol
+                    if users.filter(user => !user.isVerified).length > 0
+                        .card.m-3
+                            .card-header.border-transparent
+                                h3.card-title Użytkownicy czekający na weryfikację
+                            .card-body
+                                .table-responsive
+                                    .table
+                                        table
+                                            thead
+                                                tr
+                                                    th ID
+                                                    th Imię i nazwisko
+                                                    th Login
+                                                    th Akcja
+                                            tbody
+                                              each user in users.filter(user => !user.isVerified)
+                                                  tr
+                                                      td= user.id
+                                                      td= user.name
+                                                      td= user.login
+                                                      td lol
