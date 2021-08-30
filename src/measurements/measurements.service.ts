@@ -67,11 +67,17 @@ export class MeasurementsService {
       dataToSave['temperature'] = Number(dataToSave['temperature']) / 10;
       dataToSave['humidity'] = Number(dataToSave['humidity']) / 10;
 
-      // return await this.measurementsRepository.save(dataToSave);
-      return await this.measurementsRepository.save(dataToSave);
-    } else {
-      throw new InternalServerErrorException();
+      const measurement = await this.findByProps(
+        Number(stationNumber),
+        dataToSave['series'],
+        dataToSave['number'],
+        dataToSave['date'],
+      );
+
+      if (!measurement)
+        return await this.measurementsRepository.save(dataToSave);
     }
+    throw new InternalServerErrorException();
   }
 
   async findAll() {
@@ -101,6 +107,22 @@ export class MeasurementsService {
 
   async findOne(id: number) {
     return await this.measurementsRepository.findOne(id);
+  }
+
+  async findByProps(
+    stationNumber: number,
+    series: number,
+    number: number,
+    date: Date,
+  ) {
+    return await this.measurementsRepository
+      .createQueryBuilder('measurement')
+      .leftJoinAndSelect('measurement.station', 'station')
+      .where('station.number = :stationNumber', { stationNumber })
+      .andWhere('measurement.series = :series', { series })
+      .andWhere('measurement.number = :number', { number })
+      .andWhere('measurement.date = :date', { date })
+      .getOne();
   }
 
   async update(id: number, updateMeasurementDto: UpdateMeasurementDto) {

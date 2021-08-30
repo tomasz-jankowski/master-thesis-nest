@@ -127,6 +127,7 @@ append body-files
         let data = JSON.parse('!{JSON.stringify(chosenSeries)}');
 
         for (let d of data) {
+          d.isoDate = d.date;
           d.time = new Date(d.date).toLocaleTimeString();
           d.date = new Date(d.date).toLocaleDateString();
           d.pump = (d.pump === true) ? 'tak' : 'nie';
@@ -144,6 +145,7 @@ append body-files
             { data: 'id', title: 'ID' },
             { data: 'series', title: 'Seria' },
             { data: 'number', title: 'Numer' },
+            { data: 'isoDate', title: 'Data ISO 8601', visible: false },
             { data: 'date', title: 'Data' },
             { data: 'time', title: 'Czas' },
             { data: 'latitude', title: 'Szerokość geograficzna' },

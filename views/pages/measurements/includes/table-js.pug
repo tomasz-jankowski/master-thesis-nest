@@ -82,6 +82,7 @@ script.
 
       for (let d of data) {
         if (d.station.uniqueName) d.station.number += ` (${d.station.uniqueName})`;
+        d.isoDate = d.date;
         d.date = new Date(d.date).toLocaleString();
         d.time = d.date.split(',')[1];
         d.date = d.date.split(',')[0];
@@ -103,6 +104,7 @@ script.
             { data: 'station.isActive', title: 'Stacja aktywna?' },
             { data: 'series', title: 'Seria' },
             { data: 'number', title: 'Numer' },
+            { data: 'isoDate', title: 'Data ISO 8601', visible: false },
             { data: 'date', title: 'Data' },
             { data: 'time', title: 'Czas' },
             { data: 'latitude', title: 'Szerokość geograficzna' },
