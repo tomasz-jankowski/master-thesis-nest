@@ -23,7 +23,6 @@ export class User extends TimeStampedEntity {
   isVerified: boolean;
 
   @BeforeInsert()
-  @BeforeUpdate()
   async hashPassword(): Promise<void> {
     this.password = await hash(this.password, 10);
   }

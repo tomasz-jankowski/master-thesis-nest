@@ -1,0 +1,78 @@
+script(src='/js/jquery.dataTables.min.js')
+script(src='/js/dataTables.bootstrap4.min.js')
+script(src='/js/dataTables.fixedColumns.min.js')
+script(src='/js/dataTables.responsive.min.js')
+script(src='/js/responsive.bootstrap4.min.js')
+script(src='/js/dataTables.searchBuilder.min.js')
+script(src='/js/searchBuilder.bootstrap4.min.js')
+script.
+    $(document).ready(function() {
+
+      const options = {
+        dom: 'Qlfrtip',
+        language: {
+          url: '/js/pl.json'
+        },
+        aLengthMenu: [
+          [5, 10, 15, 20, 50, 100, -1],
+          [5, 10, 15, 20, 50, 100, '∞'],
+        ]
+      };
+
+      let data = JSON.parse('!{JSON.stringify(stations)}');
+
+      for (let d of data) {
+        d.isActive = (d.isActive === true) ? 'tak' : 'nie';
+        d.isRegistered = (d.isRegistered === true) ? 'tak' : 'nie';
+        d.measurementsLength = d.measurements.length;
+        if (!d.uniqueName) d.uniqueName = '-';
+      }
+
+      const table = $('table').DataTable({
+          data,
+          columns: [
+            { data: 'id', title: 'ID' },
+            { data: 'number', title: 'Numer' },
+            { data: 'uniqueName', title: 'Nazwa' },
+            { data: 'measurementsLength', title: 'Liczba pomiarów' },
+            { data: 'isActive', title: 'Aktywna?' },
+            { data: 'isRegistered', title: 'Zarejestrowana?' },
+            { data: 'updatedAt', title: 'Zmodyfikowano' },
+            { data: 'createdAt', title: 'Utworzono' },
+            {
+              data: 'id',
+              title: 'Akcja',
+              render: () =>
+                '<button class="btn btm-sm btn-outline-success mr-1 show">Zobacz</button><button class="btn btm-sm btn-outline-warning mr-1 ml-1 edit">Edytuj</button><button class="btn btm-sm btn-outline-danger ml-1 delete">Usuń</button>'
+            }
+          ],
+          ...options,
+        });
+
+        $('table tbody').on('click', 'button.show', function() {
+          const data = table.row($(this).parents('tr')).data();
+          window.location.href = `/stations/${data.id}`;
+        });
+
+        $('table tbody').on('click', 'button.edit', function() {
+          const data = table.row($(this).parents('tr')).data();
+          window.location.href = `/stations/${data.id}/edit`;
+        });
+
+        $('table tbody').on('click', 'button.delete', function() {
+          const data = table.row($(this).parents('tr')).data();
+          console.log(data);
+          if (confirm('Czy na pewno usunąć stację wraz ze wszystkimi pomiarami? \r\nSpowoduje to odświeżenie strony!')) {
+            $.ajax({
+              type: 'DELETE',
+              url: '/api/stations/' + data.id,
+              success: () => {
+                window.location.href = '/stations'
+              },
+              error: () => {
+                toastr.error('Wystąpił błąd.');
+              }
+            })
+          }
+        });
+    });

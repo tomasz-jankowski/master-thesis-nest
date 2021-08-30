@@ -1,0 +1,97 @@
+script(src='/js/jquery.dataTables.min.js')
+script(src='/js/dataTables.bootstrap4.min.js')
+script(src='/js/dataTables.fixedColumns.min.js')
+script(src='/js/dataTables.responsive.min.js')
+script(src='/js/responsive.bootstrap4.min.js')
+script(src='/js/dataTables.searchBuilder.min.js')
+script(src='/js/searchBuilder.bootstrap4.min.js')
+script.
+    $(document).ready(function() {
+
+      const options = {
+        dom: 'Qlfrtip',
+        language: {
+          url: '/js/pl.json'
+        },
+        aLengthMenu: [
+          [5, 10, 15, 20, 50, 100, -1],
+          [5, 10, 15, 20, 50, 100, '∞'],
+        ]
+      };
+
+      let data = JSON.parse('!{JSON.stringify(users)}');
+
+      for (let d of data) {
+        d.isVerified = (d.isVerified === true) ? 'tak' : 'nie';
+      }
+
+      const table = $('table').DataTable({
+          data,
+          columns: [
+            { data: 'id', title: 'ID' },
+            { data: 'name', title: 'Imię i nazwisko' },
+            { data: 'login', title: 'Login' },
+            { data: 'isVerified', title: 'Zweryfikowany?' },
+            { data: 'updatedAt', title: 'Zmodyfikowano' },
+            { data: 'createdAt', title: 'Utworzono' },
+            {
+              data: 'id',
+              title: 'Akcja',
+              render: (data, type, row) => {
+                if (row.isVerified === 'tak')
+                  return '<button class="btn btm-sm btn-outline-warning mr-1 unverify">Cofnij weryfikację</button><button class="btn btm-sm btn-outline-danger ml-1 delete">Usuń</button>'
+                else
+                  return '<button class="btn btm-sm btn-outline-success mr-1 verify">Zweryfikuj</button><button class="btn btm-sm btn-outline-danger ml-1 delete">Usuń</button>'
+              }
+            }
+          ],
+          ...options,
+        });
+
+        $('table tbody').on('click', 'button.verify', function() {
+          const data = table.row($(this).parents('tr')).data();
+          $.ajax({
+            type: 'PATCH',
+            url: '/api/users/' + data.id,
+            data: { isVerified: true },
+            success: () => {
+              toastr.success('Pomyślnie zweryfikowano użytkownika. Odśwież, by zobaczyć zmiany.');
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        });
+
+        $('table tbody').on('click', 'button.unverify', function() {
+          const data = table.row($(this).parents('tr')).data();
+          $.ajax({
+            type: 'PATCH',
+            url: '/api/users/' + data.id,
+            data: { isVerified: false },
+            success: () => {
+              toastr.success('Pomyślnie usunięto weryfikację użytkownika. Odśwież, by zobaczyć zmiany.');
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        });
+
+        $('table tbody').on('click', 'button.delete', function() {
+          const data = table.row($(this).parents('tr')).data();
+          console.log(data);
+          if (confirm('Czy na pewno usunąć użytkownika? \r\nSpowoduje to odświeżenie strony!')) {
+            $.ajax({
+              type: 'DELETE',
+              url: '/api/users/' + data.id,
+              success: () => {
+                window.location.href = '/users'
+              },
+              error: () => {
+                toastr.error('Wystąpił błąd.');
+              }
+            })
+          }
+        });
+    });

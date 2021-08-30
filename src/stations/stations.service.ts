@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Station } from './station.entity';
 import { Repository } from 'typeorm';
+import { PatchStationDto } from './dto/patch-station.dto';
+import { CreateStationDto } from './dto/create-station.dto';
 
 @Injectable()
 export class StationsService {
@@ -12,33 +13,59 @@ export class StationsService {
     private stationsRepository: Repository<Station>,
   ) {}
 
-  async create(uniqueId: string) {
-    return await this.stationsRepository.save({ uniqueId });
+  async createWithNumber(number: number) {
+    return await this.stationsRepository.save({ number });
   }
 
   async findAll() {
     return await this.stationsRepository.find({ relations: ['measurements'] });
   }
 
+  async create(createStationDto: CreateStationDto) {
+    if (createStationDto['isActive'])
+      createStationDto['isActive'] = createStationDto['isActive'] === 'true';
+    return await this.stationsRepository.save({
+      isRegistered: true,
+      ...createStationDto,
+    });
+  }
+
   async findOne(id: number) {
-    return await this.stationsRepository.findOne(id, { relations: ['measurements'] });
+    return await this.stationsRepository.findOne(id, {
+      relations: ['measurements'],
+    });
   }
 
-  async findByUniqueName(uniqueId: string) {
-    return await this.stationsRepository.findOne({ uniqueId });
+  async findByNumber(number: number) {
+    return await this.stationsRepository
+      .createQueryBuilder('station')
+      .where('station.number = :number', { number })
+      .getOne();
   }
 
-  update(id: number, updateStationDto: UpdateStationDto) {
-    return `This action updates a #${id} station`;
+  async update(id: number, updateStationDto: UpdateStationDto) {
+    updateStationDto['isActive'] = updateStationDto['isActive'] === 'true';
+    updateStationDto['isRegistered'] =
+      updateStationDto['isRegistered'] === 'true';
+    return await this.stationsRepository.update(id, updateStationDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} station`;
+  async patch(id: number, patchStationDto: PatchStationDto) {
+    if (patchStationDto['isActive'])
+      patchStationDto['isActive'] = patchStationDto['isActive'] === 'true';
+    if (patchStationDto['isRegistered'])
+      patchStationDto['isRegistered'] =
+        patchStationDto['isRegistered'] === 'true';
+    return await this.stationsRepository.update(id, patchStationDto);
   }
 
-  async findOrCreate(id: string) {
-    const station = await this.findByUniqueName(id);
+  async remove(id: number) {
+    return await this.stationsRepository.delete(id);
+  }
+
+  async findOrCreate(number: string) {
+    const station = await this.findByNumber(+number);
     if (station) return station;
-    else return await this.create(id);
+    else return await this.createWithNumber(+number);
   }
 }

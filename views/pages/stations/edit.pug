@@ -1,0 +1,60 @@
+extends ../../base
+
+prepend config
+  - var stationsPage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col.card.bg-transparent
+                    .card-body
+                        form
+                            .form-group
+                                label(for='number') Numer
+                                input.form-control(type='number' step=1 name='number' id='number' value=station.number)
+                            .form-group
+                                label(for='uniqueName') Nazwa
+                                input.form-control(type='text' name='uniqueName' id='uniqueName' value=station.uniqueName)
+                            .form-group
+                                label(for='isActive') Aktywna?
+                                select.form-control(name='isActive' id='isActive')
+                                    if station.isActive === true
+                                        option(value='true' selected) tak
+                                        option(value='false') nie
+                                    if station.isActive === false
+                                        option(value='true') tak
+                                        option(value='false' selected) nie
+                            .form-group
+                                label(for='isRegistered') Zarejestrowana?
+                                select.form-control(name='isRegistered' id='isRegistered')
+                                    if station.isRegistered === true
+                                        option(value='true' selected) tak
+                                        option(value='false') nie
+                                    if station.isRegistered === false
+                                        option(value='true') tak
+                                        option(value='false' selected) nie
+                            button.btn.btn-primary Zatwierdź
+
+append body-files
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+    script.
+        const station = JSON.parse('!{JSON.stringify(station)}');
+        const form = $('form');
+
+        form.on('submit', (event) => {
+          event.preventDefault();
+          const data = form.serializeJSON();
+          $.ajax({
+            type: 'PUT',
+            url: '/api/stations/' + station.id,
+            data,
+            success: () => {
+              window.location.href='/stations'
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        })

@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PatchUserDto } from './dto/patch-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -10,6 +13,10 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  async findById(id: number) {
+    return await this.usersRepository.findOne(id);
+  }
 
   async findOne(login): Promise<any> {
     return await this.usersRepository.findOne({ login });
@@ -38,11 +45,24 @@ export class UsersService {
   //   return `This action returns a #${id} user`;
   // }
   //
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-  //
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.currentPassword) {
+      const user = await this.findById(id);
+      if (await compare(updateUserDto.currentPassword, user.password)) {
+        for (const prop in updateUserDto) user[prop] = updateUserDto[prop];
+        if (updateUserDto['password'])
+          user.password = await hash(user.password, 10);
+        return await user.save();
+      }
+    } else return;
+  }
+
+  async patch(id: number, patchUserDto: PatchUserDto) {
+    patchUserDto['isVerified'] = patchUserDto['isVerified'] === 'true';
+    return await this.usersRepository.update(id, patchUserDto);
+  }
+
+  async remove(id: number) {
+    return await this.usersRepository.delete(id);
+  }
 }

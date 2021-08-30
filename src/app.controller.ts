@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Render,
   Request,
   Res,
@@ -17,7 +18,7 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
 import { Public } from './common/decorators/public.decorator';
 import { User } from './common/decorators/user.decorator';
 import { User as UserEntity } from './users/user.entity';
-import { MeasurementsFilterDto } from './measurements/dto/measurements-filter.dto';
+import { UpdateMeasurementDto } from './measurements/dto/update-measurement.dto';
 
 @Controller()
 @UseFilters(AuthExceptionFilter)
@@ -79,30 +80,76 @@ export class AppController {
     return { title: 'Stacje pomiarowe', stations, user };
   }
 
+  @Get('stations/new')
+  @Render('pages/stations/new')
+  addStation(@User() user: UserEntity) {
+    return { title: 'Dodaj stację pomiarową', user };
+  }
+
+  @Get('stations/:id')
+  @Render('pages/stations/show')
+  async showStation(@Param('id') id: string, @User() user: UserEntity) {
+    const station = await this.appService.getStation(+id);
+    return { title: `Szczegóły stacji ${station.number}`, station, user };
+  }
+
+  @Get('stations/:id/series')
+  @Render('pages/stations/show')
+  async showStationSeries(
+    @Param('id') id: string,
+    @Query() query: string,
+    @User() user: UserEntity,
+  ) {
+    const station = await this.appService.getStation(+id);
+    const chosenSeries = await this.appService.getSeries(+id, query);
+    return {
+      title: `Szczegóły stacji ${station.number}`,
+      station,
+      chosenSeries,
+      user,
+    };
+  }
+
+  @Get('stations/:id/edit')
+  @Render('pages/stations/edit')
+  async editStation(@Param('id') id: string, @User() user: UserEntity) {
+    const station = await this.appService.getStation(+id);
+    return { title: `Edytuj stację ${station.number}`, station, user };
+  }
+
   // measurements
   @Get('measurements')
   @Render('pages/measurements/index')
   async measurements(@User() user: UserEntity) {
     const measurements = await this.appService.getMeasurements();
-    const stations = await this.appService.getStations();
-    return { title: 'Pomiary', measurements, stations, user };
+    return { title: 'Pomiary', measurements, user };
   }
 
-  // @Post('measurements')
-  // @Render('pages/measurements/index')
-  // async measurementsFiltered(
-  //   @User() user: UserEntity,
-  //   @Body() filterDto?: MeasurementsFilterDto,
-  // ) {
-  //   const measurements = await this.appService.getMeasurements(filterDto);
-  //   const stations = await this.appService.getStations();
-  //   return { title: 'Pomiary', measurements, stations, user };
-  // }
-
-  @Get('measurements/:id')
+  @Get('measurements/:id/edit')
   @Render('pages/measurements/edit')
   async editMeasurement(@Param('id') id: string, @User() user: UserEntity) {
     const measurement = await this.appService.getMeasurement(+id);
-    return { title: `Edytuj pomiar ${id}`, measurement, user };
+    return { title: `Edytuj pomiar o ID ${id}`, measurement, user };
+  }
+
+  // users
+  @Get('users')
+  @Render('pages/users/index')
+  async users(@User() user: UserEntity) {
+    const users = await this.appService.getUsers();
+    return { title: 'Użytkownicy', users, user };
+  }
+
+  @Get('users/new')
+  @Render('pages/users/new')
+  addUser(@User() user: UserEntity) {
+    return { title: 'Dodaj stację pomiarową', user };
+  }
+
+  @Get('profile')
+  @Render('pages/users/profile')
+  async profile(@User() user: UserEntity) {
+    const profileUser = await this.appService.getUser(user.id);
+    return { title: 'Edytuj profil', profileUser, user };
   }
 }

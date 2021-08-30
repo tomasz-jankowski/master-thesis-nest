@@ -6,23 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { StationsService } from './stations.service';
-import { CreateStationDto } from './dto/create-station.dto';
 import { UpdateStationDto } from './dto/update-station.dto';
+import { PatchStationDto } from './dto/patch-station.dto';
+import { CreateStationDto } from './dto/create-station.dto';
 
 @Controller('api/stations')
 export class StationsController {
   constructor(private readonly stationsService: StationsService) {}
 
-  @Post()
-  async create(@Body() uniqueId) {
-    return this.stationsService.create(uniqueId);
-  }
-
   @Get()
   async findAll() {
     return this.stationsService.findAll();
+  }
+
+  @Post()
+  async create(@Body() createStationDto: CreateStationDto) {
+    return await this.stationsService.create(createStationDto);
   }
 
   @Get(':id')
@@ -30,13 +32,21 @@ export class StationsController {
     return this.stationsService.findOne(+id);
   }
 
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateStationDto: UpdateStationDto) {
+    return await this.stationsService.update(+id, updateStationDto);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStationDto: UpdateStationDto) {
-    return this.stationsService.update(+id, updateStationDto);
+  async patch(
+    @Param('id') id: string,
+    @Body() patchStationDto: PatchStationDto,
+  ) {
+    return await this.stationsService.patch(+id, patchStationDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stationsService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.stationsService.remove(+id);
   }
 }

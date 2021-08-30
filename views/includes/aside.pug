@@ -6,9 +6,21 @@ aside.main-sidebar.sidebar-light-primary
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
                 li.nav-item
                     a.nav-link(href='/' class=(indexPage ? 'active' : ''))
-                        i.fas.flaticon.flaticon-home.align-middle
+                        i.fas.flaticonie.flaticon-home.align-middle
                         p.ml-2 Strona główna
-
+        nav.mt-2
+            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+                li.nav-header WIZUALIZACJA DANYCH
+                    li.nav-item
+                        a.nav-link(href='/route' class=(routePage ? 'active' : ''))
+                            i.fas.fa-route.flaticonie.align-middle
+                            p.ml-2 Trasa stacji pomiarowej
+                    li.nav-item
+                        a.nav-link(href='/map' class=(mapPage ? 'active' : ''))
+                            i.fas.fa-map-marked-alt.flaticonie.align-middle
+                            p.ml-2 Mapa zanieczyszczeń
+        nav.mt-2
+            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
                 li.nav-header ZARZĄDZANIE
                     li.nav-item
                         a.nav-link(href='/stations' class=(stationsPage ? 'active' : ''))
@@ -25,28 +37,12 @@ aside.main-sidebar.sidebar-light-primary
 
         nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
-                li.nav-header POBERANIE DANYCH
+                li.nav-header OPERACJE
                     li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 Stacje pomiarowe
+                        a.nav-link(href='/download' class=(downloadPage ? 'active' : ''))
+                            i.fas.fa-file-download.flaticonie.align-middle
+                            p.ml-2 Pobieranie danych
                     li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 Airly
-                    li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 Główny Inspektorat Ochrony Środowiska
-                    li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 AirNow
-                    li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 AQI
-                    li.nav-item
-                        a.nav-link(href='')
-                            i.far.fa-dot-circle
-                            p.ml-2 OpenWeather
+                        a.nav-link(href='/upload' class=(uploadPage ? 'active' : ''))
+                            i.fas.fa-sd-card.flaticonie.align-middle
+                            p.ml-2 Import z karty SD

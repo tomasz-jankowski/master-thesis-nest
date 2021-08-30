@@ -88,11 +88,23 @@ append content
 
 append body-files
     script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
     script.
+        const measurement = JSON.parse('!{JSON.stringify(measurement)}');
         const form = $('form');
 
         form.on('submit', (event) => {
           event.preventDefault();
           const data = form.serializeJSON();
-          console.log(data);
+          $.ajax({
+            type: 'PUT',
+            url: '/api/measurements/' + measurement.id,
+            data,
+            success: () => {
+              window.location.href='/measurements'
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
         })

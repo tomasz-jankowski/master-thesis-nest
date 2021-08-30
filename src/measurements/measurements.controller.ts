@@ -3,17 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  Req,
-  Query,
-  ValidationPipe,
+  Req, Put
 } from '@nestjs/common';
 import { MeasurementsService } from './measurements.service';
 import { UpdateMeasurementDto } from './dto/update-measurement.dto';
 import { Public } from '../common/decorators/public.decorator';
-import { MeasurementsFilterDto } from './dto/measurements-filter.dto';
 
 @Controller('api/measurements')
 export class MeasurementsController {
@@ -30,22 +26,17 @@ export class MeasurementsController {
     return await this.measurementsService.findAll();
   }
 
-  @Post('filter')
-  findFiltered(@Body() filterDto: MeasurementsFilterDto) {
-    return this.measurementsService.findFiltered(filterDto);
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.measurementsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.measurementsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
+  @Put(':id')
+  async update(
     @Param('id') id: string,
     @Body() updateMeasurementDto: UpdateMeasurementDto,
   ) {
-    return this.measurementsService.update(+id, updateMeasurementDto);
+    return await this.measurementsService.update(+id, updateMeasurementDto);
   }
 
   @Delete(':id')

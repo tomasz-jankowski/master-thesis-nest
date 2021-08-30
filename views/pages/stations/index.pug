@@ -1,12 +1,17 @@
 extends ../../base
 
 append head-files
-    link(rel='stylesheet' href='/css/flatpickr.min.css')
+    include includes/css
 
 prepend config
   - var stationsPage = true;
 
 append content
+    a.btn.btn-primary.ml-3.mb-4(href='/stations/new') Dodaj nową
     section.content
         .container-fluid
-            .row
+            include includes/table
+
+
+append body-files
+    include includes/table-js

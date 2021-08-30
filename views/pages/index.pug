@@ -56,11 +56,12 @@ append content
                                                     th Akcja
                                             tbody
                                               each station in stations.filter(station => station.isRegistered && !station.isActive)
-                                                  tr
+                                                  tr(id=`stationActivate${station.id}`)
                                                     td= station.id
-                                                    td= station.uniqueId
+                                                    td= station.number
                                                     td= station.measurements.length
-                                                    td lol
+                                                    td
+                                                        button.btn.btn-sm.btn-outline-success.mr-1(onclick=`activate(${station.id});return false;`) Aktywuj
                 .row
                     if stations.filter(station => !station.isRegistered).length > 0
                         .card.m-3
@@ -78,11 +79,13 @@ append content
                                                     th Akcja
                                             tbody
                                                 each station in stations.filter(station => !station.isRegistered)
-                                                    tr
+                                                    tr(id=`stationRegister${station.id}`)
                                                         td= station.id
-                                                        td= station.uniqueId
+                                                        td= station.number
                                                         td= station.measurements.length
-                                                        td lol
+                                                        td
+                                                            button.btn.btn-sm.btn-outline-success.mr-1(onclick=`register(${station.id});return false;`) Zarejestruj
+                                                            button.btn.btn-sm.btn-outline-danger.ml-1(onclick=`deleteStation(${station.id});return false;`) Usuń
                     if users.filter(user => !user.isVerified).length > 0
                         .card.m-3
                             .card-header.border-transparent
@@ -99,8 +102,91 @@ append content
                                                     th Akcja
                                             tbody
                                               each user in users.filter(user => !user.isVerified)
-                                                  tr
+                                                  tr(id=`user${user.id}`)
                                                       td= user.id
                                                       td= user.name
                                                       td= user.login
-                                                      td lol
+                                                      td
+                                                          button.btn.btn-sm.btn-outline-success.mr-1(onclick=`verify(${user.id});return false;`) Zweryfikuj
+                                                          button.btn.btn-sm.btn-outline-danger.ml-1(onclick=`deleteUser(${user.id});return false;`) Usuń
+
+append body-files
+    script(src='/js/toastr.min.js')
+    script.
+        function activate(id) {
+          $.ajax({
+            type: 'PATCH',
+            url: '/api/stations/' + id,
+            data: { isActive: true },
+            success: () => {
+              $(`#stationActivate${id}`).remove();
+              toastr.success('Pomyślnie oznaczono stację jako aktywną. Odśwież, by zobaczyć zmiany.');
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        }
+
+        function register(id) {
+          $.ajax({
+            type: 'PATCH',
+            url: '/api/stations/' + id,
+            data: { isRegistered: true },
+            success: () => {
+              $(`#stationRegister${id}`).remove();
+              toastr.success('Pomyślnie zarejestrowano stację. Odśwież, by zobaczyć zmiany.');
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        }
+
+        function verify(id) {
+          $.ajax({
+            type: 'PATCH',
+            url: '/api/users/' + id,
+            data: { isVerified: true },
+            success: () => {
+              $(`#user${id}`).remove();
+              toastr.success('Pomyślnie zweryfikowano użytkownika. Odśwież, by zobaczyć zmiany.');
+            },
+            error: () => {
+              toastr.error('Wystąpił błąd.');
+            }
+          })
+        }
+
+        function deleteStation(id) {
+          if (confirm('Czy na pewno usunąć stację wraz ze wszystkimi pomiarami?')) {
+            $.ajax({
+              type: 'DELETE',
+              url: '/api/stations/' + id,
+              success: () => {
+                $(`#stationActivate${id}`).remove();
+                $(`#stationRegister${id}`).remove();
+                toastr.success('Pomyślnie usunięto stację. Odśwież, by zobaczyć zmiany.');
+              },
+              error: () => {
+                toastr.error('Wystąpił błąd.');
+              }
+            })
+          }
+        }
+
+        function deleteUser(id) {
+          if (confirm('Czy na pewno usunąć użytkownika?')) {
+            $.ajax({
+              type: 'DELETE',
+              url: '/api/users/' + id,
+              success: () => {
+                $(`#user${id}`).remove();
+                toastr.success('Pomyślnie usunięto użytkownika. Odśwież, by zobaczyć zmiany.');
+              },
+              error: () => {
+                toastr.error('Wystąpił błąd.');
+              }
+            })
+          }
+        }

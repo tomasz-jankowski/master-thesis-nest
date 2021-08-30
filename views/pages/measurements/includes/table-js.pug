@@ -19,7 +19,7 @@ script(src='/js/dataTables.dateTime.min.js')
 script(src='/js/datetime-moment.js')
 script.
     $(document).ready(function() {
-      $.fn.dataTable.moment('DD.MM.YYYY');
+      $.fn.dataTable.moment('D.MM.YYYY');
       $.fn.dataTable.moment('HH:mm:ss');
 
       const options = {
@@ -61,7 +61,6 @@ script.
           action: () => {
             const selectedRows = table.rows({ selected: true });
             const rows = selectedRows.nodes();
-            console.log(rows);
             const count = selectedRows.count();
             const data = selectedRows.data();
             if (count > 0) {
@@ -82,10 +81,12 @@ script.
       let data = JSON.parse('!{JSON.stringify(measurements)}');
 
       for (let d of data) {
-        if (d.station.uniqueName) d.station.id += ` (${d.station.uniqueName})`;
-        d.time = new Date(d.date).toLocaleTimeString();
-        d.date = new Date(d.date).toLocaleDateString();
-        d.pump = (d.pump === 'true') ? 'tak' : 'nie';
+        if (d.station.uniqueName) d.station.number += ` (${d.station.uniqueName})`;
+        d.date = new Date(d.date).toLocaleString();
+        d.time = d.date.split(',')[1];
+        d.date = d.date.split(',')[0];
+        d.pump = (d.pump === true) ? 'tak' : 'nie';
+        d.station.isActive = (d.station.isActive === true) ? 'tak' : 'nie';
       }
 
       const table = $('table').DataTable({
@@ -98,7 +99,8 @@ script.
                 '<button class="btn btm-sm btn-outline-warning">Edytuj</button>'
             },
             { data: 'id', title: 'ID' },
-            { data: 'station.id', title: 'Numer stacji' },
+            { data: 'station.number', title: 'Numer stacji' },
+            { data: 'station.isActive', title: 'Stacja aktywna?' },
             { data: 'series', title: 'Seria' },
             { data: 'number', title: 'Numer' },
             { data: 'date', title: 'Data' },
@@ -132,6 +134,6 @@ script.
 
         $('table tbody').on('click', 'button', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/measurements/${data.id}`;
+          window.location.href = `/measurements/${data.id}/edit`;
         });
     });

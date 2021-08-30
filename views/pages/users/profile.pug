@@ -1,0 +1,67 @@
+extends ../../base
+
+prepend config
+  - var usersPage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col.card.bg-transparent
+                    .card-body
+                        form
+                            .form-group
+                                label(for='name') Imię i nazwisko
+                                input.form-control(type='text' name='name' id='name' autocomplete='name' value=profileUser.name)
+                            .form-group
+                                label(for='login') Login
+                                input.form-control(type='text' name='login' id='login' autocomplete='username' value=profileUser.login)
+                            .form-group
+                                label(for='currentPassword') Aktualne hasło
+                                input.form-control(type='password' name='currentPassword' id='currentPassword' autocomplete='current-password' required)
+                            .form-group
+                                label(for='password') Nowe hasło
+                                input.form-control(type='password' name='password' id='password' autocomplete='new-password')
+                            .form-group
+                                label(for='passwordConfirm') Nowe hasło (powtórz)
+                                input.form-control(type='password' id='passwordConfirm' autocomplete='new-password')
+
+                            span#message
+                            br
+                            button.btn.btn-primary#submit Zatwierdź
+
+append body-files
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+    script.
+      $('#password, #passwordConfirm').on('keyup', function() {
+        if ($('#password').val() === $('#passwordConfirm').val()) {
+          $('#message').html('');
+          $('#submit').prop('disabled', false);
+        } else {
+          $('#message').html('Hasła nie są zgodne.').css('color', 'red');
+          $('#submit').prop('disabled', true);
+        }
+      });
+
+      const user = JSON.parse('!{JSON.stringify(profileUser)}');
+      const form = $('form');
+
+      form.on('submit', (event) => {
+        event.preventDefault();
+        let data = form.serializeJSON();
+        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== ''));
+        console.log(data);
+
+        $.ajax({
+          type: 'PUT',
+          url: '/api/users/' + user.id,
+          data,
+          success: () => {
+            window.location.href='/profile'
+          },
+          error: () => {
+            toastr.error('Wystąpił błąd.');
+          }
+        })
+      })
