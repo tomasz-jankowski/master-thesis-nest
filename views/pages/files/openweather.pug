@@ -1,5 +1,8 @@
 extends ../../base
 
+append head-files
+    include includes/css
+
 prepend config
   - var openweatherPage = true;
 
@@ -10,4 +13,224 @@ append content
                 .col-md-12
                     .card.card-default
                         .card-header
-                            h3.card-title Wybierz zakres dat i lokalizacji
+                            h3.card-title Aktualny pomiar dla lokalizacji
+                        .card-body
+                            form#form1
+                                .form-group
+                                    label Klucz API
+                                    .input-group
+                                        input(type='text' name='APPID' required style='width: 50%')
+                                .form-check
+                                    input.form-check-input#pro1(type='checkbox' name='pro')
+                                    label(for='pro1') PRO
+                                .form-group(style='height: 350px')
+                                    label Lokalizacja:
+                                    .input-group
+                                        input#loc1(type='text' name='loc' value='52.40598,16.928344' required)
+                                .form-group
+                                    button.btn.btn-primary#submit1(type='button') Zatwierdź
+            .row
+                .col-md-12
+                    .card.card-default
+                        .card-header
+                            h3.card-title Prognoza na 5 dni dla lokalizacji
+                        .card-body
+                            form#form2
+                                .form-group
+                                    label Klucz API
+                                    .input-group
+                                        input(type='text' name='APPID' required style='width: 50%')
+                                .form-check
+                                    input.form-check-input#pro2(type='checkbox' name='pro')
+                                    label(for='pro2') PRO
+                                .form-group(style='height: 350px')
+                                    label Lokalizacja:
+                                    .input-group
+                                        input#loc2(type='text' name='loc' value='52.40598,16.928344' required)
+                                .form-group
+                                    button.btn.btn-primary#submit2(type='button') Zatwierdź
+            .row
+                .col-md-12
+                    .card.card-default
+                        .card-header
+                            h3.card-title Historyczne pomiary dla lokalizacji
+                        .card-body
+                            form#form3
+                                .form-group
+                                    label Klucz API
+                                    .input-group
+                                        input(type='text' name='APPID' required style='width: 50%')
+                                .form-check
+                                    input.form-check-input#pro3(type='checkbox' name='pro')
+                                    label(for='pro3') PRO
+                                .form-group
+                                    label Data od:
+                                    .input-group
+                                        .input-group-prepend
+                                            span.input-group-text
+                                                i.far.fa-calendar.alt
+                                        input#start(type='datetime' name='start')
+                                .form-group
+                                    label Data do:
+                                    .input-group
+                                        .input-group-prepend
+                                            span.input-group-text
+                                                i.far.fa-calendar.alt
+                                        input#end(type='datetime' name='end')
+                                .form-group(style='height: 350px')
+                                    label Lokalizacja:
+                                    .input-group
+                                        input#loc3(type='text' name='loc' value='52.40598,16.928344' required)
+                                .form-group
+                                    button.btn.btn-primary#submit3(type='button') Zatwierdź
+
+append body-files
+    script(src='/js/flatpickr.js')
+    script(src='/js/pl.js')
+    script(src='/js/jquery.bootstrap-duallistbox.min.js')
+    script(src='/js/leaflet.js')
+    script(src='/js/leaflet-locationpicker.min.js')
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+    script(src='/js/moment-with-locales.js')
+
+    script.
+      window.onload = function() {
+        const leafletOptions = {
+          alwaysOpen: true,
+          position: 'bottomleft',
+          locationDigits: 6,
+          height: 250,
+          width: 250,
+          map: {
+            zoom: 13,
+            zoomControl: false,
+            center: [52.40598, 16.928344]
+          }
+        };
+
+        // FORM 1
+
+        const loc1 = $('#loc1');
+        loc1.leafletLocationPicker(leafletOptions);
+
+        const submit1 = $('#submit1');
+        const form1 = $('#form1');
+
+        submit1.on('click', () => {
+          let data = form1.serializeJSON();
+
+          if (data.pro) data.pro = 'pro.';
+          else data.pro = 'api.';
+
+          const [lat, lng] = data.loc.split(',');
+          delete data.loc;
+          data.lat = lat;
+          data.lng = lng;
+
+          $.ajax({
+            type: 'GET',
+            url: `http://${data.pro}openweathermap.org/data/2.5/air_pollution?lat=${data.lat}&lon=${data.lng}&appid=${data.APPID}`,
+            data,
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'openweather.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+
+        // FORM 2
+
+        const loc2 = $('#loc2');
+        loc2.leafletLocationPicker(leafletOptions);
+
+        const submit2 = $('#submit2');
+        const form2 = $('#form2');
+
+        submit2.on('click', () => {
+          let data = form2.serializeJSON();
+
+          if (data.pro) data.pro = 'pro.';
+          else data.pro = 'api.';
+
+          const [lat, lng] = data.loc.split(',');
+          delete data.loc;
+          data.lat = lat;
+          data.lng = lng;
+
+          $.ajax({
+            type: 'GET',
+            url: `http://${data.pro}openweathermap.org/data/2.5/air_pollution/forecast?lat=${data.lat}&lon=${data.lng}&appid=${data.APPID}`,
+            data,
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'openweather.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+
+        // FORM 3
+
+        const dateStartInput = $('#start');
+        const dateEndInput = $('#end');
+
+        const flatpickrOptions = {
+          locale: 'pl',
+          enableTime: true
+        };
+
+        flatpickr(dateStartInput, flatpickrOptions);
+        flatpickr(dateEndInput, flatpickrOptions);
+
+        const loc3 = $('#loc3');
+        loc3.leafletLocationPicker(leafletOptions);
+
+        const submit3 = $('#submit3');
+        const form3 = $('#form3');
+
+        submit3.on('click', () => {
+          let data = form3.serializeJSON();
+
+          if (data.pro) data.pro = 'pro.';
+          else data.pro = 'api.';
+
+          const [lat, lng] = data.loc.split(',');
+          delete data.loc;
+          data.lat = lat;
+          data.lng = lng;
+
+          data.start = moment(data.start).unix();
+          data.end = moment(data.end).unix();
+
+          $.ajax({
+            type: 'GET',
+            url: `http://${data.pro}openweathermap.org/data/2.5/air_pollution/history?lat=${data.lat}&lon=${data.lng}&start=${data.start}&end=${data.end}&appid=${data.APPID}`,
+            data,
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'openweather.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+      }

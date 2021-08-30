@@ -165,18 +165,6 @@ export class AppController {
     return { title: 'Pobieranie danych: Airly', user };
   }
 
-  @Get('download/gios')
-  @Render('pages/files/gios')
-  downloadGios(@User() user: UserEntity) {
-    return { title: 'Pobieranie danych: GIOŚ', user };
-  }
-
-  @Get('download/airnow')
-  @Render('pages/files/airnow')
-  downloadAirnow(@User() user: UserEntity) {
-    return { title: 'Pobieranie danych: AirNow', user };
-  }
-
   @Get('download/aqi')
   @Render('pages/files/aqi')
   downloadAqi(@User() user: UserEntity) {

@@ -1,5 +1,8 @@
 extends ../../base
 
+append head-files
+    include includes/css
+
 prepend config
   - var aqiPage = true;
 
@@ -10,4 +13,114 @@ append content
                 .col-md-12
                     .card.card-default
                         .card-header
-                            h3.card-title Wybierz zakres dat i lokalizacji
+                            h3.card-title Aktualny pomiar dla miasta i prognoza na 5 dni
+                        .card-body
+                            form#form1
+                                .form-group
+                                    label Token
+                                    .input-group
+                                        input(type='text' name='token' required style='width: 50%')
+                                .form-group
+                                    label Nazwa miasta:
+                                    .input-group
+                                        input(type='text' name='city' required)
+                                .form-group
+                                    button.btn.btn-primary#submit1(type='button') Zatwierdź
+            .row
+                    .col-md-12
+                        .card.card-default
+                            .card-header
+                                h3.card-title Aktualny pomiar dla lokalizacji i prognoza na 5 dni
+                            .card-body
+                                form#form2
+                                    .form-group
+                                        label Token
+                                        .input-group
+                                            input(type='text' name='token' required style='width: 50%')
+                                    .form-group(style='height: 350px')
+                                        label Lokalizacja:
+                                        .input-group
+                                            input#loc(type='text' name='loc' value='52.40598,16.928344' required)
+                                    .form-group
+                                        button.btn.btn-primary#submit2(type='button') Zatwierdź
+
+append body-files
+    script(src='/js/flatpickr.js')
+    script(src='/js/pl.js')
+    script(src='/js/jquery.bootstrap-duallistbox.min.js')
+    script(src='/js/leaflet.js')
+    script(src='/js/leaflet-locationpicker.min.js')
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+
+    script.
+      window.onload = function() {
+        const submit1 = $('#submit1');
+        const form1 = $('#form1');
+
+        submit1.on('click', () => {
+          let data = form1.serializeJSON();
+
+          $.ajax({
+            type: 'GET',
+            url: `https://api.waqi.info/feed/${data.city}/?token=${data.token}`,
+            data,
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'aqi.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+
+        const submit2 = $('#submit2');
+        const form2 = $('#form2');
+
+        submit2.on('click', () => {
+          let data = form2.serializeJSON();
+          const [lat, lng] = data.loc.split(',');
+          delete data.loc;
+          data.lat = lat;
+          data.lng = lng;
+
+          $.ajax({
+            type: 'GET',
+            url: `https://api.waqi.info/feed/geo:${data.lat};${data.lng}/?token=${data.token}`,
+            data,
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'aqi.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+
+        const leafletOptions = {
+          alwaysOpen: true,
+          position: 'bottomleft',
+          locationDigits: 6,
+          height: 250,
+          width: 250,
+          map: {
+            zoom: 13,
+            zoomControl: false,
+            center: [52.40598, 16.928344]
+          }
+        };
+
+        const loc = $('#loc');
+        loc.leafletLocationPicker(leafletOptions);
+
+      };
