@@ -2,14 +2,18 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   Param,
   Post,
   Query,
   Render,
   Request,
   Res,
+  UploadedFile,
+  UploadedFiles,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Response } from 'express';
@@ -19,6 +23,7 @@ import { Public } from './common/decorators/public.decorator';
 import { User } from './common/decorators/user.decorator';
 import { User as UserEntity } from './users/user.entity';
 import { UpdateMeasurementDto } from './measurements/dto/update-measurement.dto';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 @UseFilters(AuthExceptionFilter)
@@ -151,5 +156,54 @@ export class AppController {
   async profile(@User() user: UserEntity) {
     const profileUser = await this.appService.getUser(user.id);
     return { title: 'Edytuj profil', profileUser, user };
+  }
+
+  // download
+  @Get('download/airly')
+  @Render('pages/files/airly')
+  downloadAirly(@User() user: UserEntity) {
+    return { title: 'Pobieranie danych: Airly', user };
+  }
+
+  @Get('download/gios')
+  @Render('pages/files/gios')
+  downloadGios(@User() user: UserEntity) {
+    return { title: 'Pobieranie danych: GIOŚ', user };
+  }
+
+  @Get('download/airnow')
+  @Render('pages/files/airnow')
+  downloadAirnow(@User() user: UserEntity) {
+    return { title: 'Pobieranie danych: AirNow', user };
+  }
+
+  @Get('download/aqi')
+  @Render('pages/files/aqi')
+  downloadAqi(@User() user: UserEntity) {
+    return { title: 'Pobieranie danych: AQI', user };
+  }
+
+  @Get('download/openweather')
+  @Render('pages/files/openweather')
+  downloadOpenweather(@User() user: UserEntity) {
+    return { title: 'Pobieranie danych: OpenWeather', user };
+  }
+
+  // upload
+  @Get('upload')
+  @Render('pages/files/upload')
+  upload(@User() user: UserEntity) {
+    return { title: 'Import danych z karty SD', user };
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (file.mimetype === 'text/plain') {
+      const data = file.buffer + '';
+      await this.appService.upload(data);
+      return { error: false };
+    }
+    return { error: true };
   }
 }

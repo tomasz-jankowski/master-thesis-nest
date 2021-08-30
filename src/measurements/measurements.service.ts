@@ -15,11 +15,15 @@ export class MeasurementsService {
     private stationsService: StationsService,
   ) {}
 
-  async create(data, req) {
-    if (req.readable) {
-      // body is not JSON, get raw body instead
-      const raw = (await rawbody(req)).toString().trim();
-      data = JSON.parse(raw.replace(/\\/g, ''));
+  async create(data, req?) {
+    if (req) {
+      if (req.readable) {
+        // body is not JSON, get raw body instead
+        const raw = (await rawbody(req)).toString().trim();
+        data = JSON.parse(raw.replace(/\\/g, ''));
+      }
+    } else {
+      data = JSON.parse(data);
     }
 
     const keys = [

@@ -38,4 +38,8 @@ export class AppService {
   async getUser(id: number) {
     return await this.usersService.findById(id);
   }
+
+  async upload(data: string) {
+    return await this.measurementsService.create(data);
+  }
 }

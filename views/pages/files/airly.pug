@@ -1,0 +1,84 @@
+extends ../../base
+
+append head-files
+    include includes/css
+
+prepend config
+  - var airlyPage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col-md-12
+                    .card.card-default
+                        .card-header
+                            h3.card-title Wybierz opcje
+                        .card-body
+                            form
+                                .form-group
+                                    label Klucz API
+                                    .input-group
+                                        input#apikey(type='text' name='apikey' required style='width: 50%')
+                                .form-group(style='height: 350px')
+                                    label Lokalizacja:
+                                    .input-group
+                                        input#loc(type='text' name='loc' value='52.40598,16.928344' required)
+                                .form-group
+                                    btn.btn.btn-primary#submit(type='button') Zatwierdź
+
+append body-files
+    script(src='/js/flatpickr.js')
+    script(src='/js/pl.js')
+    script(src='/js/jquery.bootstrap-duallistbox.min.js')
+    script(src='/js/leaflet.js')
+    script(src='/js/leaflet-locationpicker.min.js')
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+
+    script.
+      window.onload = function() {
+        const leafletOptions = {
+          alwaysOpen: true,
+          position: 'bottomleft',
+          locationDigits: 6,
+          height: 250,
+          width: 250,
+          map: {
+            zoom: 13,
+            zoomControl: false,
+            center: [52.40598, 16.928344]
+          }
+        };
+
+        const loc = $('#loc');
+        loc.leafletLocationPicker(leafletOptions);
+
+        const submit = $('#submit');
+        const form = $('form');
+        submit.on('click', () => {
+          let data = form.serializeJSON();
+          const [ lat, lng ] = data.loc.split(',');
+          delete data.loc;
+          data.lat = lat;
+          data.lng = lng;
+
+          $.ajax({
+            type: 'GET',
+            url: 'https://airapi.airly.eu/v2/measurements/point',
+            data,
+            headers: { 'apikey' : data.apikey },
+            success: (data) => {
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+                type: 'text/plain'
+              }));
+              a.setAttribute('download', 'airly.txt');
+              a.click();
+            },
+            error: (data) => {
+              toastr.error(data.responseJSON.message);
+            }
+          });
+        });
+      };

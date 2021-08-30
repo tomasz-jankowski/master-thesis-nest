@@ -91,8 +91,14 @@ append body-files
             },
             {
               extend: 'csv',
+              charset: 'utf-8',
               exportOptions: {
-                columns: ':not(:first-child)'
+                columns: ':not(:first-child)',
+                format: {
+                  header: (data, row, column) => {
+                    return $(column).attr('aria-label').split(':')[0];
+                  }
+                }
               }
             },
             {
@@ -142,33 +148,33 @@ append body-files
               render: () =>
                 '<button class="btn btm-sm btn-outline-warning">Edytuj</button>'
             },
-            { data: 'id', title: 'ID' },
-            { data: 'series', title: 'Seria' },
-            { data: 'number', title: 'Numer' },
-            { data: 'isoDate', title: 'Data ISO 8601', visible: false },
-            { data: 'date', title: 'Data' },
-            { data: 'time', title: 'Czas' },
-            { data: 'latitude', title: 'Szerokość geograficzna' },
-            { data: 'longitude', title: 'Długość geograficzna' },
-            { data: 'altitude', title: 'Wysokość bezwzględna' },
-            { data: 'batteryVoltage', title: 'Napięcie baterii [V]' },
-            { data: 'pump', title: 'Pompa' },
-            { data: 'pm1', title: 'PM1 [µg/m3]' },
-            { data: 'pm25', title: 'PM2.5 [µg/m3]' },
-            { data: 'pm10', title: 'PM10 [µg/m3]' },
-            { data: 'quantity03', title: 'L. dz. cz. > 0,3 µm/0,1 l' },
-            { data: 'quantity05', title: 'L. dz. cz. > 0,5 µm/0,1 l' },
-            { data: 'quantity1', title: 'L. dz. cz. > 1 µm/0,1 l' },
-            { data: 'quantity25', title: 'L. dz. cz. > 2,5 µm/0,1 l' },
-            { data: 'quantity5', title: 'L. dz. cz. > 5 µm/0,1 l' },
-            { data: 'quantity10', title: 'L. dz. cz. > 10 µm/0,1 l' },
-            { data: 'hcho', title: 'HCHO [mg/m3]' },
-            { data: 'temperature', title: 'Temperatura [℃]' },
-            { data: 'humidity', title: 'Wilgotność [%]' },
-            { data: 'quantityCO2', title: 'L. cz. CO2 [ppm]' },
-            { data: 'quantityTVOC', title: 'L. cz. TVOC [ppb]' },
-            { data: 'updatedAt', title: 'Zmodyfikowano' },
-            { data: 'createdAt', title: 'Utworzono' },
+            { data: 'id', title: 'ID', ariaTitle: 'id' },
+            { data: 'series', title: 'Seria', ariaTitle: 'series' },
+            { data: 'number', title: 'Numer', ariaTitle: 'number' },
+            { data: 'isoDate', title: 'Data ISO 8601', visible: false, ariaTitle: 'isoDate' },
+            { data: 'date', title: 'Data', ariaTitle: 'date' },
+            { data: 'time', title: 'Czas', ariaTitle: 'time' },
+            { data: 'latitude', title: 'Szerokość geograficzna', ariaTitle: 'latitude' },
+            { data: 'longitude', title: 'Długość geograficzna', ariaTitle: 'longitude' },
+            { data: 'altitude', title: 'Wysokość bezwzględna', ariaTitle: 'altitude' },
+            { data: 'batteryVoltage', title: 'Napięcie baterii [V]', ariaTitle: 'batteryVoltage' },
+            { data: 'pump', title: 'Pompa', ariaTitle: 'pump' },
+            { data: 'pm1', title: 'PM1 [µg/m3]', ariaTitle: 'pm1' },
+            { data: 'pm25', title: 'PM2.5 [µg/m3]', ariaTitle: 'pm25' },
+            { data: 'pm10', title: 'PM10 [µg/m3]', ariaTitle: 'pm10' },
+            { data: 'quantity03', title: 'L. dz. cz. > 0,3 µm/0,1 l', ariaTitle: 'quantity03' },
+            { data: 'quantity05', title: 'L. dz. cz. > 0,5 µm/0,1 l', ariaTitle: 'quantity05' },
+            { data: 'quantity1', title: 'L. dz. cz. > 1 µm/0,1 l', ariaTitle: 'quantity1' },
+            { data: 'quantity25', title: 'L. dz. cz. > 2,5 µm/0,1 l', ariaTitle: 'quantity25' },
+            { data: 'quantity5', title: 'L. dz. cz. > 5 µm/0,1 l', ariaTitle: 'quantity5' },
+            { data: 'quantity10', title: 'L. dz. cz. > 10 µm/0,1 l', ariaTitle: 'quantity10' },
+            { data: 'hcho', title: 'HCHO [mg/m3]', ariaTitle: 'hcho' },
+            { data: 'temperature', title: 'Temperatura [℃]', ariaTitle: 'temperature' },
+            { data: 'humidity', title: 'Wilgotność [%]', ariaTitle: 'humidity' },
+            { data: 'quantityCO2', title: 'L. cz. CO2 [ppm]', ariaTitle: 'quantityCO2' },
+            { data: 'quantityTVOC', title: 'L. cz. TVOC [ppb]', ariaTitle: 'quantityTVOC' },
+            { data: 'updatedAt', title: 'Zmodyfikowano', ariaTitle: 'updatedAt' },
+            { data: 'createdAt', title: 'Utworzono', ariaTitle: 'createdAt' },
           ],
           ...options,
         });

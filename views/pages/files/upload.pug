@@ -1,0 +1,130 @@
+extends ../../base
+
+append head-files
+    link(rel='stylesheet' href='/css/dropzone.min.css')
+
+prepend config
+  - var uploadPage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col-md-12
+                    .card.card-default
+                        .card-header
+                            h3.card-title Wgraj pliki z karty SD
+                        .card-body
+                            #actions.row
+                                .col-lg-6
+                                    .btn-group.w-100
+                                        span.btn.btn-success.col.fileinput-button
+                                            i.fas.fa-plus
+                                            span  Dodaj pliki
+                                        button.btn.btn-primary.col.start(type='submit')
+                                            i.fas.fa-upload
+                                            span  Rozpocznij wgrywanie
+                                        button.btn.btn-warning.col.cancel(type='reset')
+                                            i.fas.fa-times-circle
+                                            span  Anuluj wgrywanie
+                                .col-lg-6.d-flex.align-items-center
+                                    .fileupload-process.w-100
+                                        #total-progress.progress.progress-striped.active(role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0')
+                                            .progress-bar.progress-bar-success(style='width:0%;' data-dz-uploadprogress='')
+                            #previews.table.table-striped.files
+                                #template.row.mt-2
+                                    .col-auto
+                                        span.preview
+                                            img(src='data:,' alt='' data-dz-thumbnail='')
+                                    .col.d-flex.align-items-center
+                                        p.mb-0
+                                            span.lead(data-dz-name='')
+                                            |  (
+                                            span(data-dz-size='')
+                                            |  )
+                                        strong.error.text-danger(data-dz-errormessage='')
+                                    .col-4.d-flex.align-items-center
+                                        .progress.progress-striped.active.w-100(role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0')
+                                            .progress-bar.progress-bar-success(style='width:0%;' data-dz-uploadprogress='')
+                                    .col-auto.d-flex.align-items-center
+                                        .btn-group
+                                            button.btn.btn-primary.start
+                                                i.fas.fa-upload
+                                                span  Rozpocznij
+                                            button.btn.btn-warning.cancel(data-dz-remove='')
+                                                i.fas.fa-times-circle
+                                                span  Anuluj
+                                            button.btn.btn-danger.delete(data-dz-remove='')
+                                                i.fas.fa-trash
+                                                span  Usuń
+
+append body-files
+    script(src='/js/toastr.min.js')
+    script(src='/js/dropzone.min.js')
+    script.
+      // DropzoneJS Demo Code Start
+      Dropzone.autoDiscover = false
+
+      // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+      var previewNode = document.querySelector("#template")
+      previewNode.id = ""
+      var previewTemplate = previewNode.parentNode.innerHTML
+      previewNode.parentNode.removeChild(previewNode)
+
+      var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+        url: "/upload", // Set the url
+        thumbnailWidth: 80,
+        thumbnailHeight: 80,
+        parallelUploads: 5,
+        previewTemplate: previewTemplate,
+        autoQueue: false, // Make sure the files aren't queued until manually added
+        previewsContainer: "#previews", // Define the container to display the previews
+        clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+      })
+
+      myDropzone.on("addedfile", function(file) {
+        // Hookup the start button
+        file.previewElement.querySelector(".start").onclick = function() {
+          myDropzone.enqueueFile(file)
+        }
+      })
+
+      // Update the total progress bar
+      myDropzone.on("totaluploadprogress", function(progress) {
+        document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+      })
+
+      myDropzone.on("sending", function(file) {
+        // Show the total progress bar when upload starts
+        document.querySelector("#total-progress").style.opacity = "1"
+        // And disable the start button
+        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+      })
+
+      // Hide the total progress bar when nothing's uploading anymore
+      myDropzone.on("queuecomplete", function(progress) {
+        document.querySelector("#total-progress").style.opacity = "0"
+      })
+
+      myDropzone.on("success", function(file, result) {
+        if (result.error)
+            toastr.error(`${file.name}: nieobsługiwane rozszerzenie pliku!`);
+        else
+            toastr.success(`${file.name} wgrany pomyślnie!`);
+
+        myDropzone.removeFile(file);
+      })
+
+      myDropzone.on("error", function(file) {
+        toastr.error('Wystąpił nieznany błąd!');
+      })
+
+      // Setup the buttons for all transfers
+      // The "add files" button doesn't need to be setup because the config
+      // `clickable` has already been specified.
+      document.querySelector("#actions .start").onclick = function() {
+        myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+      }
+      document.querySelector("#actions .cancel").onclick = function() {
+        myDropzone.removeAllFiles(true)
+      }

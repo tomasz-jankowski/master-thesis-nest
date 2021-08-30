@@ -17,7 +17,7 @@ export class MeasurementsController {
 
   @Public()
   @Post()
-  async create(@Body() data, @Req() req) {
+  async create(@Body() data, @Req() req?) {
     return await this.measurementsService.create(data, req);
   }
 

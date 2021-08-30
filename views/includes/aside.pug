@@ -36,13 +36,35 @@ aside.main-sidebar.sidebar-light-primary
                             p.ml-2 Użytkownicy
 
         nav.mt-2
-            ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
+            ul.nav.nav-pills.nav-sidebar.flex-column
                 li.nav-header OPERACJE
-                    li.nav-item
-                        a.nav-link(href='/download' class=(downloadPage ? 'active' : ''))
-                            i.fas.fa-file-download.flaticonie.align-middle
-                            p.ml-2 Pobieranie danych
                     li.nav-item
                         a.nav-link(href='/upload' class=(uploadPage ? 'active' : ''))
                             i.fas.fa-sd-card.flaticonie.align-middle
                             p.ml-2 Import z karty SD
+                    li.nav-item.menu-open
+                        a.nav-link
+                            i.fas.fa-file-download.flaticonie.align-middle
+                            p.ml-2 Pobieranie danych
+                            i.fas.fa-angle-left.right
+                        ul.nav.nav-treeview
+                            li.nav-item
+                                a.nav-link(href='/download/airly' class=(airlyPage ? 'active bg-primary' : ''))
+                                    i.far.fa-circle.nav-icon
+                                    p Airly
+                            li.nav-item
+                                a.nav-link(href='/download/gios' class=(giosPage ? 'active bg-primary' : ''))
+                                    i.far.fa-circle.nav-icon
+                                    p GIOŚ
+                            li.nav-item
+                                a.nav-link(href='/download/airnow' class=(airnowPage ? 'active bg-primary' : ''))
+                                    i.far.fa-circle.nav-icon
+                                    p AirNow
+                            li.nav-item
+                                a.nav-link(href='/download/aqi' class=(aqiPage ? 'active bg-primary' : ''))
+                                    i.far.fa-circle.nav-icon
+                                    p AQI
+                            li.nav-item
+                                a.nav-link(href='/download/openweather' class=(openweatherPage ? 'active bg-primary' : ''))
+                                    i.far.fa-circle.nav-icon
+                                    p OpenWeather
