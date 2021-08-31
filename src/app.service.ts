@@ -27,6 +27,11 @@ export class AppService {
     return await this.measurementsService.findRegistered();
   }
 
+  async getMeasurementsByDate(query?) {
+    if (query) return await this.measurementsService.getByDate(query);
+    else return await this.measurementsService.getByDate();
+  }
+
   async getMeasurement(id: number) {
     return await this.measurementsService.findOne(id);
   }

@@ -51,7 +51,6 @@ append body-files
         event.preventDefault();
         let data = form.serializeJSON();
         data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== ''));
-        console.log(data);
 
         $.ajax({
           type: 'PUT',

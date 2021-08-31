@@ -1,8 +1,6 @@
 import {
-  Body,
   Controller,
   Get,
-  InternalServerErrorException,
   Param,
   Post,
   Query,
@@ -10,7 +8,6 @@ import {
   Request,
   Res,
   UploadedFile,
-  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -22,8 +19,7 @@ import { AuthExceptionFilter } from './common/filters/auth-exception.filter';
 import { Public } from './common/decorators/public.decorator';
 import { User } from './common/decorators/user.decorator';
 import { User as UserEntity } from './users/user.entity';
-import { UpdateMeasurementDto } from './measurements/dto/update-measurement.dto';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 @UseFilters(AuthExceptionFilter)
@@ -196,6 +192,36 @@ export class AppController {
   }
 
   // data-vis
+  @Get('map')
+  @Render('pages/data-vis/map')
+  async map(@User() user: UserEntity, @Query() query?: string) {
+    let measurements;
+    if (query) {
+      measurements = await this.appService.getMeasurementsByDate(query);
+      return { title: 'Mapa zanieczyszczeń', measurements, user, query };
+    } else {
+      measurements = await this.appService.getMeasurementsByDate();
+      return { title: 'Mapa zanieczyszczeń', measurements, user };
+    }
+  }
+
+  @Get('map/dates')
+  @Render('pages/stations/show')
+  async mapDates(
+    @Param('id') id: string,
+    @Query() query: string,
+    @User() user: UserEntity,
+  ) {
+    const station = await this.appService.getStation(+id);
+    const chosenSeries = await this.appService.getSeries(+id, query);
+    return {
+      title: `Szczegóły stacji ${station.number}`,
+      station,
+      chosenSeries,
+      user,
+    };
+  }
+
   @Get('route')
   @Render('pages/data-vis/route-index')
   async route(@User() user: UserEntity) {

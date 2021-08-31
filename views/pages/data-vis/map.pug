@@ -1,0 +1,114 @@
+extends ../../base
+
+append head-files
+    link(rel='stylesheet' href='/css/leaflet.css')
+    link(rel='stylesheet' href='/css/flatpickr.min.css')
+
+prepend config
+  - var mapPage = true;
+
+append content
+    section.content
+        h4.text-danger.mb-3.ml-2 Pomiary pochodzące ze stacji niezarejestrowanych nie są wyświetlane.
+        .container-fluid
+                .row
+                    .col.card.bg-light
+                        .card-header
+                            h5 Wybierz zakres dat
+                        .card-body
+                            form(autocomplete='off')
+                                .row
+                                    .form-group
+                                        label Data od:
+                                        .input-group
+                                            .input-group-prepend
+                                                span.input-group-text
+                                                    i.far.fa-calendar.alt
+                                            input#dateStart(type='datetime' name='dateStart')
+                                    .form-group.ml-3
+                                        label Data do:
+                                        .input-group
+                                            .input-group-prepend
+                                                span.input-group-text
+                                                    i.far.fa-calendar.alt
+                                            input#dateEnd(type='datetime' name='dateEnd')
+                                .row
+                                    .form-group
+                                        button.btn.btn-primary#submit(type='submit') Zatwierdź
+
+
+                .row
+                    .col.card.bg-light
+                        .card-header
+                            h5.text-bold Wyświetlany zakres:
+                            if Object.keys(query).length > 0
+                                h5
+                                    if query.dateStart !== 'undefined'
+                                        span.ml-1 od
+                                        span.ml-1= new Date(query.dateStart).toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                                        br
+                                    if query.dateEnd !== 'undefined'
+                                        span.ml-1 do
+                                        span.ml-1= new Date(query.dateEnd).toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+                            else
+                                h5 ostatnie 24 h
+                        .card-body
+                            .map_box#mapid
+
+append body-files
+    script(src='/js/moment-with-locales.js')
+    script(src='/js/flatpickr.js')
+    script(src='/js/pl.js')
+    script(src='/js/leaflet.js')
+    script(src='/js/jquery.serializejson.js')
+    script(src='/js/toastr.min.js')
+    script.
+      window.onload = function() {
+        // DATA PICKER
+
+        const flatpickrOptions = {
+          locale: 'pl',
+          enableTime: true,
+          dateFormat: 'd.m.Y H:i'
+        };
+
+        const dateStartInput = $('#dateStart');
+        const dateEndInput = $('#dateEnd');
+
+        flatpickr(dateStartInput, flatpickrOptions);
+        flatpickr(dateEndInput, flatpickrOptions);
+
+        const form = $('form');
+        form.on('submit', event => {
+          event.preventDefault();
+          let data = form.serializeJSON();
+          data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== ''));
+
+          if (Object.keys(data).length > 0) {
+            if (data['dateStart'])
+              data['dateStart'] = moment(data['dateStart'], 'DD.MM.YYYY HH:mm', true).toISOString();
+
+            if (data['dateEnd'])
+              data['dateEnd'] = moment(data['dateEnd'], 'DD.MM.YYYY HH:mm', true).toISOString();
+
+            window.location.href = `/map?dateStart=${data['dateStart']}&dateEnd=${data['dateEnd']}`;
+          } else toastr.error('Nie można zatwierdzić pustego formularza!')
+        });
+
+        // LEAFLET MAP
+
+        var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+
+        L.circle([51.508, -0.11], {
+          color: 'red',
+          fillColor: '#f03',
+          fillOpacity: 0.5,
+          radius: 500
+        }).addTo(mymap);
+
+      };

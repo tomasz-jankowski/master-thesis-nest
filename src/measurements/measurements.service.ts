@@ -110,6 +110,33 @@ export class MeasurementsService {
       .getMany();
   }
 
+  async getByDate(query?) {
+    let dateEnd, dateStart;
+
+    if (Object.keys(query).length === 0) {
+      const today = new Date();
+      const yesterday = moment(today).subtract(24, 'hours');
+
+      dateEnd = today.toISOString();
+      dateStart = yesterday.toISOString();
+    } else {
+      dateEnd = query['dateEnd'];
+      dateStart = query['dateStart'];
+    }
+
+    const q = this.measurementsRepository
+      .createQueryBuilder('measurement')
+      .leftJoinAndSelect('measurement.station', 'station')
+      .where('station.isRegistered');
+
+    if (dateStart && dateStart !== 'undefined')
+      q.andWhere('measurement.date >= :dateStart', { dateStart });
+    if (dateEnd && dateEnd !== 'undefined')
+      q.andWhere('measurement.date <= :dateEnd', { dateEnd });
+
+    return await q.getMany();
+  }
+
   async findOne(id: number) {
     return await this.measurementsRepository.findOne(id);
   }
