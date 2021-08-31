@@ -1,5 +1,15 @@
 extends ../../base
 
+append head-files
+    link(rel='stylesheet' href='/css/dataTables.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/buttons.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/fixedColumns.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/responsive.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/searchBuilder.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/searchBuilder.dataTables.min.css')
+    link(rel='stylesheet' href='/css/dataTables.dateTime.min.css')
+    link(rel='stylesheet' href='/css/select.dataTables.min.css')
+
 prepend config
   - var routePage = true;
 
@@ -11,24 +21,60 @@ append content
                     .card
                         .card-header.border-0
                             h3.card-title Wybierz stację pomiarową
-                        .card-body.table-responsive.p-0
+                        .card-body.table-responsive
                             #table-wrapper
                                 table.table.table-hover.text-nowrap.text-center
-                                    thead
-                                        tr
-                                            th ID
-                                            th Numer stacji
-                                            th Nazwa stacji
-                                            th Liczba serii pomiarowych
-                                            th Liczba pomiarów
-                                            th Akcja
-                                    tbody
-                                        tr
-                                            each station in stations
-                                              td= station.id
-                                              td= station.number
-                                              td= station.uniqueName || '-'
-                                              td= [...new Set(station.measurements.map(item => item.series))].length
-                                              td= station.measurements.length
-                                              td
-                                                a.btn.btn-info(href=`/route/${station.id}`) Zobacz trasę
+
+append body-files
+    script(src='/js/jquery.dataTables.min.js')
+    script(src='/js/dataTables.bootstrap4.min.js')
+    script(src='/js/dataTables.fixedColumns.min.js')
+    script(src='/js/dataTables.responsive.min.js')
+    script(src='/js/responsive.bootstrap4.min.js')
+    script(src='/js/dataTables.searchBuilder.min.js')
+    script(src='/js/searchBuilder.bootstrap4.min.js')
+    script.
+      $(document).ready(function() {
+
+        const options = {
+          dom: 'Qlfrtip',
+          language: {
+            url: '/js/pl.json'
+          },
+          aLengthMenu: [
+            [5, 10, 15, 20, 50, 100, -1],
+            [5, 10, 15, 20, 50, 100, '∞'],
+          ]
+        };
+
+        let data = JSON.parse('!{JSON.stringify(stations)}');
+
+        for (let d of data) {
+          d.seriesLength = [...new Set(d.measurements.map(item => item.series))].length
+          d.measurementsLength = d.measurements.length;
+          if (!d.uniqueName) d.uniqueName = '-';
+        }
+
+        const table = $('table').DataTable({
+          data,
+          columns: [
+            { data: 'id', title: 'ID' },
+            { data: 'number', title: 'Numer stacji' },
+            { data: 'uniqueName', title: 'Nazwa stacji' },
+            { data: 'seriesLength', title: 'Liczba serii pomiarowych' },
+            { data: 'measurementsLength', title: 'Liczba pomiarów' },
+            {
+              data: 'id',
+              title: 'Akcja',
+              render: () =>
+                '<button class="btn btn-info show">Zobacz trasę</button>'
+            }
+          ],
+          ...options,
+        });
+
+        $('table tbody').on('click', 'button.show', function() {
+          const data = table.row($(this).parents('tr')).data();
+          window.location.href = `/route/${data.id}`;
+        });
+      });
