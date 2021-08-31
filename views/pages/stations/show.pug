@@ -19,8 +19,10 @@ append content
             if station.measurements.length === 0
               h5.text-danger Brak pomiarów do wyświetlenia.
             else
+                h5 Liczba serii pomiarowych:
+                    span.ml-1= [...new Set(station.measurements.map(item => item.series))].length
                 h5 Liczba pomiarów:
-                    spna.ml-1= station.measurements.length
+                    span.ml-1= station.measurements.length
                 .row
                     .col.card.bg-lightblue
                         .card-header

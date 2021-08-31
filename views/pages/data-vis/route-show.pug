@@ -1,0 +1,151 @@
+extends ../../base
+
+append head-files
+    link(rel='stylesheet' href='/css/leaflet.css')
+
+prepend config
+  - var routePage = true;
+
+append content
+    section.content
+        .container-fluid
+            h5 ID stacji:
+                span.ml-1= station.id
+            h5 Numer stacji:
+                span.ml-1= station.number
+            if station.uniqueName
+                h5 Nazwa stacji:
+                    span.ml-1= station.uniqueName
+            if station.measurements.length === 0
+              h5.text-danger Brak pomiarów do wyświetlenia.
+            else
+                h5 Liczba serii pomiarowych:
+                    span.ml-1= [...new Set(station.measurements.map(item => item.series))].length
+                h5 Liczba pomiarów:
+                    span.ml-1= station.measurements.length
+                .row
+                    .col.card.bg-lightblue
+                        .card-header
+                            h5 Wybierz serię pomiarową
+                        .card-body
+                            form(method='get', action=`/route/${station.id}/series`)
+                                select.form-control(name='series')
+                                    - var series = [...new Set(station.measurements.map(item => `${item.series} (${item.date.toLocaleDateString()})`))];
+                                    each s in series
+                                        if chosenSeries && s == `${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
+                                            option(value=s selected)= s
+                                        else
+                                            option(value=s)= s
+                                button.btn.btn-light.mt-1 Zatwierdź
+                if chosenSeries
+                    .row
+                        .col.card.bg-light
+                            .card-header
+                                h5 Seria pomiarowa
+                                    span.text-primary= ` ${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
+                            .card-body
+                                .map_box#mapid
+
+
+append body-files
+    script(src='/js/leaflet.js')
+    script(src='/js/leaflet-timeline-slider.min.js')
+    script(src='/js/moment-with-locales.js')
+    script.
+      $(document).ready(function() {
+        let data = JSON.parse('!{JSON.stringify(chosenSeries)}');
+
+        if (data) {
+
+          let features = [];
+          let timelineItems = [];
+
+          data.forEach((d, idx) => {
+            features.push({
+              'type': 'Feature',
+              'properties': {
+                'title': `${++idx}`,
+                'content': ` \
+                  ID ${d.id} <br><br> \
+                  <b class="text-info">Numer pomiaru:</b> ${d.number} <br> \
+                  <b class="text-info">Data pomiaru:</b> ${new Date(d.date).toLocaleString()} <br> \
+                  <b class="text-info">Długość geogr.:</b> ${d.latitude} <br> \
+                  <b class="text-info">Szerokość geogr.:</b> ${d.longitude} <br> \
+                  <b class="text-info">Wys. bezwzględna:</b> ${d.altitude} <br> \
+                  <b class="text-info">Temperatura:</b> ${d.temperature} ℃ <br> \
+                  <b class="text-info">Wilgotność:</b> ${d.humidity} % <br> \
+                  <b class="text-info">PM1:</b> ${d.pm1} µg/m3 <br> \
+                  <b class="text-info">PM2,5:</b> ${d.pm25} µg / m3 <br> \
+                  <b class="text-info">PM10:</b> ${d.pm10} µg/m3 <br> \
+                  <b class="text-info">L. dz. cz. > 0,3 µm/0,1 l:</b> ${d.quantity03} <br> \
+                  <b class="text-info">L. dz. cz. > 0,5 µm/0,1 l:</b> ${d.quantity05} <br> \
+                  <b class="text-info">L. dz. cz. > 1 µm/0,1 l:</b> ${d.quantity1} <br> \
+                  <b class="text-info">L. dz. cz. > 2,5 µm/0,1 l:</b> ${d.quantity25} <br> \
+                  <b class="text-info">L. dz. cz. > 5 µm/0,1 l:</b> ${d.quantity5} <br> \
+                  <b class="text-info">L. dz. cz. > 10 µm/0,1 l:</b> ${d.quantity10} <br> \
+                  <b class="text-info">L. cz. CO2:</b> ${d.quantityCO2} ppm <br> \
+                  <b class="text-info">L. cz. TVOC:</b> ${d.quantityTVOC} ppb \
+                  `
+              },
+              'geometry': {
+                'type': 'Point',
+                'coordinates': [
+                  d.longitude,
+                  d.latitude,
+                ]
+              }
+            });
+
+            timelineItems.push(idx);
+          });
+
+          let collection = {
+            'type': 'FeatureCollection',
+            'features': features
+          };
+
+
+          let mymap = L.map('mapid')
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(mymap);
+
+          getDataAddMarkers = function({ label, value, map, exclamation }) {
+            map.eachLayer(function(layer) {
+              if (layer instanceof L.Marker) {
+                map.removeLayer(layer);
+              }
+            });
+
+            filteredData = collection.features.filter(function(i, n) {
+              return i.properties.title === label;
+            });
+
+            var markerArray = [];
+            L.geoJson(filteredData, {
+              onEachFeature: function onEachFeature(feature, layer) {
+                content = `${exclamation}: ${feature.properties.content} <br><br> (${value}. z ${collection.features.length} pomiarów w serii)`
+                var popup = L.popup().setContent(content);
+                layer.bindPopup(popup);
+                markerArray.push(layer);
+              }
+            }).addTo(map);
+
+            var markerGroup = L.featureGroup(markerArray);
+            map.fitBounds(markerGroup.getBounds()).setZoom(14);
+          };
+
+          let width = document.getElementById('mapid').offsetWidth / timelineItems.length;
+          width *= 0.925;
+          width += 'px';
+
+          L.control.timelineSlider({
+            timelineItems,
+            changeMap: getDataAddMarkers,
+            extraChangeMapParams: { exclamation: 'Szczegóły pomiaru' },
+            labelWidth: width,
+          })
+            .addTo(mymap);
+        }
+      });

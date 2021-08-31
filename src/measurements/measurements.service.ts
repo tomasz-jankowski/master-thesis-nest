@@ -97,6 +97,7 @@ export class MeasurementsService {
       .where('station.id = :id', { id })
       .andWhere('measurement.series = :series', { series })
       .andWhere('measurement.date like :date', { date: `${date}%` })
+      .orderBy('measurement.date', 'ASC')
       .getMany();
     return data;
   }

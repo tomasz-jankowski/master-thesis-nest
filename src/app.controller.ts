@@ -194,4 +194,36 @@ export class AppController {
     }
     return { error: true };
   }
+
+  // data-vis
+  @Get('route')
+  @Render('pages/data-vis/route-index')
+  async route(@User() user: UserEntity) {
+    const stations = await this.appService.getStations();
+    return { title: 'Trasa - wybór stacji', stations, user };
+  }
+
+  @Get('route/:id')
+  @Render('pages/data-vis/route-show')
+  async showRoute(@Param('id') id: string, @User() user: UserEntity) {
+    const station = await this.appService.getStation(+id);
+    return { title: `Trasa stacji ${station.number}`, station, user };
+  }
+
+  @Get('route/:id/series')
+  @Render('pages/data-vis/route-show')
+  async showRouteSeries(
+    @Param('id') id: string,
+    @Query() query: string,
+    @User() user: UserEntity,
+  ) {
+    const station = await this.appService.getStation(+id);
+    const chosenSeries = await this.appService.getSeries(+id, query);
+    return {
+      title: `Trasa stacji ${station.number}`,
+      station,
+      chosenSeries,
+      user,
+    };
+  }
 }

@@ -1,0 +1,34 @@
+extends ../../base
+
+prepend config
+  - var routePage = true;
+
+append content
+    section.content
+        .container-fluid
+            .row
+                .col-md-12
+                    .card
+                        .card-header.border-0
+                            h3.card-title Wybierz stację pomiarową
+                        .card-body.table-responsive.p-0
+                            #table-wrapper
+                                table.table.table-hover.text-nowrap.text-center
+                                    thead
+                                        tr
+                                            th ID
+                                            th Numer stacji
+                                            th Nazwa stacji
+                                            th Liczba serii pomiarowych
+                                            th Liczba pomiarów
+                                            th Akcja
+                                    tbody
+                                        tr
+                                            each station in stations
+                                              td= station.id
+                                              td= station.number
+                                              td= station.uniqueName || '-'
+                                              td= [...new Set(station.measurements.map(item => item.series))].length
+                                              td= station.measurements.length
+                                              td
+                                                a.btn.btn-info(href=`/route/${station.id}`) Zobacz trasę
