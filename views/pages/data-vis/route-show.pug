@@ -2,6 +2,14 @@ extends ../../base
 
 append head-files
     link(rel='stylesheet' href='/css/leaflet.css')
+    link(rel='stylesheet' href='/css/dataTables.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/buttons.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/fixedColumns.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/responsive.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/searchBuilder.bootstrap4.min.css')
+    link(rel='stylesheet' href='/css/searchBuilder.dataTables.min.css')
+    link(rel='stylesheet' href='/css/dataTables.dateTime.min.css')
+    link(rel='stylesheet' href='/css/select.dataTables.min.css')
 
 prepend config
   - var routePage = true;
@@ -24,19 +32,29 @@ append content
                 h5 Liczba pomiarów:
                     span.ml-1= station.measurements.length
                 .row
-                    .col.card.bg-lightblue
+                    .col.card.bg-light
                         .card-header
                             h5 Wybierz serię pomiarową
                         .card-body
-                            form(method='get', action=`/route/${station.id}/series`)
-                                select.form-control(name='series')
-                                    - var series = [...new Set(station.measurements.map(item => `${item.series} (${item.date.toLocaleDateString()})`))];
-                                    each s in series
-                                        if chosenSeries && s == `${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
-                                            option(value=s selected)= s
-                                        else
-                                            option(value=s)= s
-                                button.btn.btn-light.mt-1 Zatwierdź
+                            #table-wrapper
+                                table.table.text-nowrap.text-center.table-striped
+                                    thead
+                                        tr
+                                            th Seria pomiarowa
+                                            th Numer serii pomiarowej
+                                            th Data serii pomiarowej
+                                            th Akcja
+                                    tbody
+                                        - var series = [...new Set(station.measurements.map(item => `${item.series} (${item.date.toLocaleDateString()})`))];
+                                        each s in series
+                                          tr
+                                            td= s
+                                            td= s.split(' ')[0]
+                                            td= s.split(' ')[1].replace(/[\(\)]/g, '')
+                                            td
+                                                a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%28${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
+                                                    | Pokaż
+
                 if chosenSeries
                     .row
                         .col.card.bg-light
@@ -48,11 +66,44 @@ append content
 
 
 append body-files
+    script(src='/js/moment-with-locales.js')
+    script(src='/js/jquery.dataTables.min.js')
+    script(src='/js/dataTables.bootstrap4.min.js')
+    script(src='/js/dataTables.fixedColumns.min.js')
+    script(src='/js/dataTables.responsive.min.js')
+    script(src='/js/responsive.bootstrap4.min.js')
+    script(src='/js/dataTables.searchBuilder.min.js')
+    script(src='/js/searchBuilder.bootstrap4.min.js')
     script(src='/js/leaflet.js')
     script(src='/js/leaflet-timeline-slider.min.js')
-    script(src='/js/moment-with-locales.js')
+    script(src='/js/dataTables.dateTime.min.js')
+    script(src='/js/datetime-moment.js')
     script.
       $(document).ready(function() {
+        // TABLE
+        $.fn.dataTable.moment('DD.MM.YYYY');
+
+        const options = {
+          dom: 'Qlfrtip',
+          language: {
+            url: '/js/pl.json'
+          },
+          aLengthMenu: [
+            [5, 10, 15, 20, 50, 100, -1],
+            [5, 10, 15, 20, 50, 100, '∞'],
+          ]
+        };
+
+        const table = $('table').DataTable({
+          ...options,
+        });
+
+        $('table tbody').on('click', 'button.show', function() {
+          const data = table.row($(this).parents('tr')).data();
+          window.location.href = `/route/${data.id}/series?series=${d.arr[0]}+%28${d.arr[1]}%29`;
+        });
+
+        // MAP
         let data = JSON.parse('!{JSON.stringify(chosenSeries)}');
 
         if (data) {
