@@ -53,7 +53,24 @@ append content
                             else
                                 h5 ostatnie 24 h
                         .card-body
-                            .map_box#mapid
+                            .row.mb-3
+                                button#pm1.btn.btn-success.mr-1 PM1
+                                button#pm25.btn.btn-outline-dark.mr-1 PM2.5
+                                button#pm10.btn.btn-outline-dark.mr-1 PM10
+                                button#co2.btn.btn-outline-dark.mr-1 CO2
+                                button#tvoc.btn.btn-outline-dark TVOC
+                            .row
+                                label(for='radius') Promień okręgów [m]:
+                            .row.mb-3
+                                input#radius.form-control(type='number' min=1 step=1 value=50 style='width: 5rem;')
+                            .row
+                                label(for='opacity') Przezroczystość okręgów [0-1]:
+                            .row.mb-3
+                                input#opacity.form-control(type='number' min=0.01 max=1 step=0.01 value=0.1 style='width: 5rem;')
+                            .row.mb-3
+                                button#change.btn.btn-primary Zatwierdź
+                            .row
+                                .map_box#mapid
 
 append body-files
     script(src='/js/moment-with-locales.js')
@@ -97,6 +114,39 @@ append body-files
 
         // LEAFLET MAP
 
+        let pollution = 'pm1';
+        let radius = 50;
+        let fillOpacity = 0.1;
+
+        function calculateColor(val) {
+          if (pollution === 'pm1') {
+            if (val <= 18) return 'green';
+            else if (val <= 33) return 'yellow';
+            else if (val <= 67) return 'orange';
+            else return 'red';
+          } else if (pollution === 'pm25') {
+            if (val <= 30) return 'green';
+            else if (val <= 55) return 'yellow';
+            else if (val <= 110) return 'orange';
+            else return 'red';
+          } else if (pollution === 'pm10') {
+            if (val <= 50) return 'green';
+            else if (val <= 90) return 'yellow';
+            else if (val <= 180) return 'orange';
+            else return 'red';
+          } else if (pollution === 'quantityCO2') {
+            if (val <= 10000) return 'green';
+            else if (val <= 30000) return 'yellow';
+            else if (val <= 50000) return 'orange';
+            else return 'red';
+          } else if (pollution === 'quantityTVOC') {
+            if (val <= 220) return 'green';
+            else if (val <= 660) return 'yellow';
+            else if (val <= 2200) return 'orange';
+            else return 'red';
+          }
+        }
+
         const measurements = JSON.parse('!{JSON.stringify(measurements)}');
         const lat = [...new Set(measurements.map(item => item.latitude))];
         const lng = [...new Set(measurements.map(item => item.longitude))];
@@ -108,20 +158,120 @@ append body-files
         const latAvg =  lat.reduce((a, b) => a + b) / lat.length;
         const lngAvg =  lng.reduce((a, b) => a + b) / lng.length;
 
-        let mymap = L.map('mapid').setView([latAvg, lngAvg]);
+        let map = L.map('mapid').setView([latAvg, lngAvg]);
 
-        mymap.fitBounds(bounds);
+        map.fitBounds(bounds);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(mymap);
+        function addCirclesToMap() {
+          map.eachLayer(function(layer) {
+            map.removeLayer(layer);
+          });
 
-        for (let d of measurements) {
-          L.circle([d.latitude, d.longitude], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 50
-          }).addTo(mymap);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+
+          let layerGroup = L.layerGroup().addTo(map);
+
+          for (let d of measurements) {
+            let circle = L.circle([d.latitude, d.longitude], {
+              color: calculateColor(d[pollution]),
+              fillColor: calculateColor(d[pollution]),
+              fillOpacity,
+              radius,
+            }).bindPopup(` \
+                          Szczegóły pomiaru: ID ${d.id} <br><br> \
+                          <b class="text-info">Numer pomiaru:</b> ${d.number} <br> \
+                          <b class="text-info">Data pomiaru:</b> ${new Date(d.date).toLocaleString()} <br> \
+                          <b class="text-info">Długość geogr.:</b> ${d.latitude} <br> \
+                          <b class="text-info">Szerokość geogr.:</b> ${d.longitude} <br> \
+                          <b class="text-info">Wys. bezwzględna:</b> ${d.altitude} <br> \
+                          <b class="text-info">Temperatura:</b> ${d.temperature} ℃ <br> \
+                          <b class="text-info">Wilgotność:</b> ${d.humidity} % <br> \
+                          <b class="text-info">PM1:</b> ${d.pm1} µg/m3 <br> \
+                          <b class="text-info">PM2,5:</b> ${d.pm25} µg / m3 <br> \
+                          <b class="text-info">PM10:</b> ${d.pm10} µg/m3 <br> \
+                          <b class="text-info">L. dz. cz. > 0,3 µm/0,1 l:</b> ${d.quantity03} <br> \
+                          <b class="text-info">L. dz. cz. > 0,5 µm/0,1 l:</b> ${d.quantity05} <br> \
+                          <b class="text-info">L. dz. cz. > 1 µm/0,1 l:</b> ${d.quantity1} <br> \
+                          <b class="text-info">L. dz. cz. > 2,5 µm/0,1 l:</b> ${d.quantity25} <br> \
+                          <b class="text-info">L. dz. cz. > 5 µm/0,1 l:</b> ${d.quantity5} <br> \
+                          <b class="text-info">L. dz. cz. > 10 µm/0,1 l:</b> ${d.quantity10} <br> \
+                          <b class="text-info">L. cz. CO2:</b> ${d.quantityCO2} ppm <br> \
+                          <b class="text-info">L. cz. TVOC:</b> ${d.quantityTVOC} ppb \
+                      `);
+            layerGroup.addLayer(circle);
+          }
         }
+
+        addCirclesToMap();
+
+        function reloadMap() {
+          addCirclesToMap();
+        }
+
+        const pm1Btn = $('#pm1');
+        const pm25Btn = $('#pm25');
+        const pm10tn = $('#pm10');
+        const co2Btn = $('#co2');
+        const tvocBtn = $('#tvoc');
+
+        function darkenButtons() {
+          pm1Btn.removeClass('btn-success');
+          pm25Btn.removeClass('btn-success');
+          pm10tn.removeClass('btn-success');
+          co2Btn.removeClass('btn-success');
+          tvocBtn.removeClass('btn-success');
+
+          pm1Btn.addClass('btn-outline-dark');
+          pm25Btn.addClass('btn-outline-dark');
+          pm10tn.addClass('btn-outline-dark');
+          co2Btn.addClass('btn-outline-dark');
+          tvocBtn.addClass('btn-outline-dark');
+        }
+
+        pm1Btn.on('click', () => {
+          darkenButtons();
+          pm1Btn.addClass('btn-success');
+          pollution = 'pm1';
+          reloadMap();
+        });
+
+        pm25Btn.on('click', () => {
+          darkenButtons();
+          pm25Btn.addClass('btn-success');
+          pollution = 'pm25';
+          reloadMap();
+        });
+
+        pm10tn.on('click', () => {
+          darkenButtons();
+          pm10tn.addClass('btn-success');
+          pollution = 'pm10';
+          reloadMap();
+        });
+
+        co2Btn.on('click', () => {
+          darkenButtons();
+          co2Btn.addClass('btn-success');
+          pollution = 'quantityCO2';
+          reloadMap();
+        });
+
+        tvocBtn.on('click', () => {
+          darkenButtons();
+          tvocBtn.addClass('btn-success');
+          pollution = 'quantityTVOC';
+          reloadMap();
+        });
+
+        const changeBtn = $('#change');
+        const radiusInput = $('#radius');
+        const opacityInput = $('#opacity');
+
+        changeBtn.on('click', () => {
+          radius = radiusInput.val();
+          fillOpacity = opacityInput.val();
+          reloadMap();
+        });
       };

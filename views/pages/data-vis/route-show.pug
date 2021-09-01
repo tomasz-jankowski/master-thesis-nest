@@ -145,7 +145,7 @@ append body-files
                 'type': 'Point',
                 'coordinates': [
                   d.longitude,
-                  d.latitude,
+                  d.latitude
                 ]
               }
             });
@@ -187,7 +187,7 @@ append body-files
             }).addTo(map);
 
             var markerGroup = L.featureGroup(markerArray);
-            map.fitBounds(markerGroup.getBounds()).setZoom(14);
+            map.fitBounds(markerGroup.getBounds());
           };
 
           let width = document.getElementById('mapid').offsetWidth / timelineItems.length;

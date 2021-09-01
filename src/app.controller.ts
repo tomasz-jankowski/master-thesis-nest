@@ -94,22 +94,22 @@ export class AppController {
     return { title: `Szczegóły stacji ${station.number}`, station, user };
   }
 
-  @Get('stations/:id/series')
-  @Render('pages/stations/show')
-  async showStationSeries(
-    @Param('id') id: string,
-    @Query() query: string,
-    @User() user: UserEntity,
-  ) {
-    const station = await this.appService.getStation(+id);
-    const chosenSeries = await this.appService.getSeries(+id, query);
-    return {
-      title: `Szczegóły stacji ${station.number}`,
-      station,
-      chosenSeries,
-      user,
-    };
-  }
+  // @Get('stations/:id/series')
+  // @Render('pages/stations/show')
+  // async showStationSeries(
+  //   @Param('id') id: string,
+  //   @Query() query: string,
+  //   @User() user: UserEntity,
+  // ) {
+  //   const station = await this.appService.getStation(+id);
+  //   const chosenSeries = await this.appService.getSeries(+id, query);
+  //   return {
+  //     title: `Szczegóły stacji ${station.number}`,
+  //     station,
+  //     chosenSeries,
+  //     user,
+  //   };
+  // }
 
   @Get('stations/:id/edit')
   @Render('pages/stations/edit')

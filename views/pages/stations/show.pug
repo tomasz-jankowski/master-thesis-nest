@@ -24,25 +24,10 @@ append content
                 h5 Liczba pomiarów:
                     span.ml-1= station.measurements.length
                 .row
-                    .col.card.bg-lightblue
-                        .card-header
-                            h5 Wybierz serię pomiarową
+                    .col.card.bg-light
                         .card-body
-                            form(method='get', action=`/stations/${station.id}/series`)
-                                select.form-control(name='series')
-                                    - var series = [...new Set(station.measurements.map(item => `${item.series} (${item.date.toLocaleDateString()})`))];
-                                    each s in series
-                                        if chosenSeries && s == `${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
-                                            option(value=s selected)= s
-                                        else
-                                            option(value=s)= s
-                                button.btn.btn-light.mt-1 Zatwierdź
-                if chosenSeries
-                    .row
-                        .col.card.bg-light
-                            .card-body
-                                #table-wrapper
-                                    table.table.table-bordered.table-striped.table-head-fixed.text-center.text-nowrap
+                            #table-wrapper
+                                table.table.table-bordered.table-striped.table-head-fixed.text-center.text-nowrap
 
 append body-files
     script(src='/js/moment-with-locales.js')
@@ -132,7 +117,7 @@ append body-files
             }]
         };
 
-        let data = JSON.parse('!{JSON.stringify(chosenSeries)}');
+        let data = JSON.parse('!{JSON.stringify(station.measurements)}');
 
         for (let d of data) {
           d.isoDate = d.date;
