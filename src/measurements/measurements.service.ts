@@ -90,6 +90,7 @@ export class MeasurementsService {
 
   async getSeries(id: number, query: string) {
     let [series, date] = query['series'].replace(/[\(\)]/g, '').split(' ');
+    if (date.split('.')[0].length === 1) date = '0' + date;
     date = moment(date, 'DD.MM.YYYY', true).format('YYYY-MM-DD');
     const data = await this.measurementsRepository
       .createQueryBuilder('measurement')

@@ -97,18 +97,31 @@ append body-files
 
         // LEAFLET MAP
 
-        var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+        const measurements = JSON.parse('!{JSON.stringify(measurements)}');
+        const lat = [...new Set(measurements.map(item => item.latitude))];
+        const lng = [...new Set(measurements.map(item => item.longitude))];
+
+        const corner1 = L.latLng(Math.min(...lat), Math.min(...lng));
+        const corner2 = L.latLng(Math.max(...lat), Math.max(...lng));
+        const bounds = L.latLngBounds(corner1, corner2);
+
+        const latAvg =  lat.reduce((a, b) => a + b) / lat.length;
+        const lngAvg =  lng.reduce((a, b) => a + b) / lng.length;
+
+        let mymap = L.map('mapid').setView([latAvg, lngAvg]);
+
+        mymap.fitBounds(bounds);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 18,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mymap);
 
-        L.circle([51.508, -0.11], {
-          color: 'red',
-          fillColor: '#f03',
-          fillOpacity: 0.5,
-          radius: 500
-        }).addTo(mymap);
-
+        for (let d of measurements) {
+          L.circle([d.latitude, d.longitude], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 50
+          }).addTo(mymap);
+        }
       };

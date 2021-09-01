@@ -52,8 +52,12 @@ append content
                                             td= s.split(' ')[0]
                                             td= s.split(' ')[1].replace(/[\(\)]/g, '')
                                             td
-                                                a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%28${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
-                                                    | Pokaż
+                                                if s.split(' ')[1].replace(/[\(\)]/g, '').split('.')[0].length === 1
+                                                    a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%280${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
+                                                        | Pokaż
+                                                else
+                                                    a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%28${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
+                                                        | Pokaż
 
                 if chosenSeries
                     .row
@@ -63,7 +67,6 @@ append content
                                     span.text-primary= ` ${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
                             .card-body
                                 .map_box#mapid
-
 
 append body-files
     script(src='/js/moment-with-locales.js')
