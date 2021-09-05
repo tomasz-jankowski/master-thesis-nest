@@ -22,7 +22,7 @@ export class Measurement extends TimeStampedEntity {
   @Column({ type: 'double' })
   altitude: number;
 
-  @Column()
+  @Column({ type: 'float' })
   batteryVoltage: number;
 
   @Column()
@@ -58,10 +58,10 @@ export class Measurement extends TimeStampedEntity {
   @Column()
   hcho: number;
 
-  @Column()
+  @Column({ type: 'float' })
   temperature: number;
 
-  @Column()
+  @Column({ type: 'float' })
   humidity: number;
 
   @Column()
