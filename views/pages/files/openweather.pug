@@ -135,12 +135,20 @@ append body-files
             url: `http://${data.pro}openweathermap.org/data/2.5/air_pollution?lat=${data.lat}&lon=${data.lng}&appid=${data.APPID}`,
             data,
             success: (data) => {
-              const a = document.createElement('a');
-              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
-                type: 'text/plain'
-              }));
-              a.setAttribute('download', 'openweather.txt');
-              a.click();
+              $.ajax({
+                type: 'POST',
+                url: '/download/json',
+                data,
+                success: () => {
+                  window.open(
+                    '/download/json',
+                    '_blank'
+                  );
+                },
+                error: (data) => {
+                  toastr.error(data.responseJSON.message);
+                }
+              })
             },
             error: (data) => {
               toastr.error(data.responseJSON.message);

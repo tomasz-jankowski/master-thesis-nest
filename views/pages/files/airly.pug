@@ -71,12 +71,20 @@ append body-files
             data,
             headers: { 'apikey' : data.apikey },
             success: (data) => {
-              const a = document.createElement('a');
-              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
-                type: 'text/plain'
-              }));
-              a.setAttribute('download', 'airly.txt');
-              a.click();
+              $.ajax({
+                type: 'POST',
+                url: '/download/json',
+                data,
+                success: () => {
+                  window.open(
+                    '/download/json',
+                    '_blank'
+                  );
+                },
+                error: (data) => {
+                  toastr.error(data.responseJSON.message);
+                }
+              })
             },
             error: (data) => {
               toastr.error(data.responseJSON.message);

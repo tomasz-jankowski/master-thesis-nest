@@ -1,6 +1,7 @@
 import {
+  Body,
   Controller,
-  Get,
+  Get, HttpCode,
   Param,
   Post,
   Query,
@@ -10,7 +11,7 @@ import {
   UploadedFile,
   UseFilters,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Response } from 'express';
@@ -20,6 +21,9 @@ import { Public } from './common/decorators/public.decorator';
 import { User } from './common/decorators/user.decorator';
 import { User as UserEntity } from './users/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs';
+import { doc } from 'prettier';
+import { join } from 'path';
 
 @Controller()
 @UseFilters(AuthExceptionFilter)
@@ -171,6 +175,21 @@ export class AppController {
   @Render('pages/files/openweather')
   downloadOpenweather(@User() user: UserEntity) {
     return { title: 'Pobieranie danych: OpenWeather', user };
+  }
+
+  @Get('download/json')
+  sendJSON(@Res() res: Response) {
+    return res.sendFile(join(__dirname, '..', 'public', 'data.json'));
+  }
+
+  @Post('download/json')
+  @HttpCode(200)
+  getJSON(@Res() res: Response, @Body() body: string) {
+    fs.writeFileSync(
+      join(__dirname, '..', 'public', 'data.json'),
+      JSON.stringify(body),
+    );
+    return;
   }
 
   // upload

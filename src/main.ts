@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as flash from 'connect-flash';
+import * as bodyParser from 'body-parser';
 import { NotFoundExceptionFilter } from './common/filters/not-found-exception.filter';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 
@@ -24,6 +25,15 @@ async function bootstrap() {
       secret: process.env.SECRET,
       resave: false,
       saveUninitialized: false,
+    }),
+  );
+
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(
+    bodyParser.urlencoded({
+      limit: '50mb',
+      extended: true,
+      parameterLimit: 1000000,
     }),
   );
 

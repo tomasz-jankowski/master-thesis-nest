@@ -96,12 +96,20 @@ append body-files
             url: `https://api.waqi.info/feed/geo:${data.lat};${data.lng}/?token=${data.token}`,
             data,
             success: (data) => {
-              const a = document.createElement('a');
-              a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
-                type: 'text/plain'
-              }));
-              a.setAttribute('download', 'aqi.txt');
-              a.click();
+              $.ajax({
+                type: 'POST',
+                url: '/download/json',
+                data,
+                success: () => {
+                  window.open(
+                    '/download/json',
+                    '_blank'
+                  );
+                },
+                error: (data) => {
+                  toastr.error(data.responseJSON.message);
+                }
+              })
             },
             error: (data) => {
               toastr.error(data.responseJSON.message);
