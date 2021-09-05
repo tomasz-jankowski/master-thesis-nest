@@ -13,13 +13,13 @@ export class Measurement extends TimeStampedEntity {
   @Column()
   date: Date;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'double' })
   latitude: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'double' })
   longitude: number;
 
-  @Column({ type: 'float' })
+  @Column({ type: 'double' })
   altitude: number;
 
   @Column()
