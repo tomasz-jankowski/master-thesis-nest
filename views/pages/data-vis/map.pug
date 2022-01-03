@@ -113,7 +113,7 @@ append body-files
             if (data['dateEnd'])
               data['dateEnd'] = moment(data['dateEnd'], 'DD.MM.YYYY HH:mm', true).toISOString();
 
-            window.location.href = `/map?dateStart=${data['dateStart']}&dateEnd=${data['dateEnd']}`;
+            window.location.href = `/powietrze/map?dateStart=${data['dateStart']}&dateEnd=${data['dateEnd']}`;
           } else toastr.error('Nie można zatwierdzić pustego formularza!')
         });
 

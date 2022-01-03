@@ -75,6 +75,6 @@ append body-files
 
         $('table tbody').on('click', 'button.show', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/route/${data.id}`;
+          window.location.href = `/powietrze/route/${data.id}`;
         });
       });

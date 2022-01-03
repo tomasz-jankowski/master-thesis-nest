@@ -18,6 +18,7 @@ export function Match(property: string, validationOptions?: ValidationOptions) {
   };
 }
 
+// Sprawdź, czy zmienna jest równa innej zmiennej (patrz: "create-user.dto.ts")
 @ValidatorConstraint({ name: 'Match' })
 export class MatchConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {

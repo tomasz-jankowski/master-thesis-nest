@@ -116,7 +116,7 @@ append body-files
         function activate(id) {
           $.ajax({
             type: 'PATCH',
-            url: '/api/stations/' + id,
+            url: '/powietrze/api/stations/' + id,
             data: { isActive: true },
             success: () => {
               $(`#stationActivate${id}`).remove();
@@ -131,7 +131,7 @@ append body-files
         function register(id) {
           $.ajax({
             type: 'PATCH',
-            url: '/api/stations/' + id,
+            url: '/powietrze/api/stations/' + id,
             data: { isRegistered: true },
             success: () => {
               $(`#stationRegister${id}`).remove();
@@ -146,7 +146,7 @@ append body-files
         function verify(id) {
           $.ajax({
             type: 'PATCH',
-            url: '/api/users/' + id,
+            url: '/powietrze/api/users/' + id,
             data: { isVerified: true },
             success: () => {
               $(`#user${id}`).remove();
@@ -162,7 +162,7 @@ append body-files
           if (confirm('Czy na pewno usunąć stację wraz ze wszystkimi pomiarami?')) {
             $.ajax({
               type: 'DELETE',
-              url: '/api/stations/' + id,
+              url: '/powietrze/api/stations/' + id,
               success: () => {
                 $(`#stationActivate${id}`).remove();
                 $(`#stationRegister${id}`).remove();
@@ -179,7 +179,7 @@ append body-files
           if (confirm('Czy na pewno usunąć użytkownika?')) {
             $.ajax({
               type: 'DELETE',
-              url: '/api/users/' + id,
+              url: '/powietrze/api/users/' + id,
               success: () => {
                 $(`#user${id}`).remove();
                 toastr.success('Pomyślnie usunięto użytkownika. Odśwież, by zobaczyć zmiany.');

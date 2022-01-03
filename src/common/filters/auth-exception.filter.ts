@@ -24,9 +24,9 @@ export class AuthExceptionFilter implements ExceptionFilter {
         'loginError',
         'Błędny login i/lub hasło albo użytkownik oczekuje na weryfikację.',
       );
-      response.redirect('/login');
+      response.redirect('/powietrze/login');
     } else {
-      response.redirect('/error');
+      response.redirect('/powietrze/error');
     }
   }
 }

@@ -58,9 +58,15 @@ append body-files
         const options = {
           dom: 'QBlfrtip',
           language: {
-            url: '/js/pl.json'
+            url: '/js/pl.json',
+            buttons: {
+              selectAll: "Zaznacz wszystkie",
+              selectNone: "Odznacz wszystkie"
+            }
           },
-          select: true,
+          select: {
+            style: 'multi'
+          },
           scrollX: true,
           scroller: true,
           aLengthMenu: [
@@ -70,6 +76,8 @@ append body-files
           fixedColumns: { left: 1 },
           fixedHeader: true,
           buttons: [
+            'selectAll',
+            'selectNone',
             {
               extend: 'copy',
               exportOptions: {
@@ -107,10 +115,10 @@ append body-files
                     for (let i = 0; i < count; i++) {
                       $.ajax({
                         type: 'DELETE',
-                        url: `/api/measurements/${data[i].id}`
+                        url: `/powietrze/api/measurements/${data[i].id}`
                       })
                     }
-                    window.location.href = '/measurements';
+                    window.location.href = '/powietrze/measurements';
                   }
                 }
               }
@@ -121,8 +129,8 @@ append body-files
 
         for (let d of data) {
           d.isoDate = d.date;
-          d.time = new Date(d.date).toLocaleTimeString();
-          d.date = new Date(d.date).toLocaleDateString();
+          d.date = new Date(d.isoDate).toLocaleDateString();
+          d.time = new Date(d.isoDate).toLocaleTimeString();
           d.pump = (d.pump === true) ? 'tak' : 'nie';
         }
 
@@ -138,7 +146,7 @@ append body-files
             { data: 'id', title: 'ID', ariaTitle: 'id' },
             { data: 'series', title: 'Seria', ariaTitle: 'series' },
             { data: 'number', title: 'Numer', ariaTitle: 'number' },
-            { data: 'isoDate', title: 'Data ISO 8601', visible: false, ariaTitle: 'isoDate' },
+            { data: 'isoDate', title: 'Data ISO 8601', visible: true, ariaTitle: 'isoDate' },
             { data: 'date', title: 'Data', ariaTitle: 'date' },
             { data: 'time', title: 'Czas', ariaTitle: 'time' },
             { data: 'latitude', title: 'Szerokość geograficzna', ariaTitle: 'latitude' },
@@ -170,6 +178,6 @@ append body-files
 
         $('table tbody').on('click', 'button', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/measurements/${data.id}/edit`;
+          window.location.href = `/powietrze/measurements/${data.id}/edit`;
         });
       });

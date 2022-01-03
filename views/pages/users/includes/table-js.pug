@@ -52,7 +52,7 @@ script.
           const data = table.row($(this).parents('tr')).data();
           $.ajax({
             type: 'PATCH',
-            url: '/api/users/' + data.id,
+            url: '/powietrze/api/users/' + data.id,
             data: { isVerified: true },
             success: () => {
               toastr.success('Pomyślnie zweryfikowano użytkownika. Odśwież, by zobaczyć zmiany.');
@@ -67,7 +67,7 @@ script.
           const data = table.row($(this).parents('tr')).data();
           $.ajax({
             type: 'PATCH',
-            url: '/api/users/' + data.id,
+            url: '/powietrze/api/users/' + data.id,
             data: { isVerified: false },
             success: () => {
               toastr.success('Pomyślnie usunięto weryfikację użytkownika. Odśwież, by zobaczyć zmiany.');
@@ -84,9 +84,9 @@ script.
           if (confirm('Czy na pewno usunąć użytkownika? \r\nSpowoduje to odświeżenie strony!')) {
             $.ajax({
               type: 'DELETE',
-              url: '/api/users/' + data.id,
+              url: '/powietrze/api/users/' + data.id,
               success: () => {
-                window.location.href = '/users'
+                window.location.href = '/powietrze/users'
               },
               error: () => {
                 toastr.error('Wystąpił błąd.');

@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Get, HttpCode,
+  Get, HttpCode, HttpStatus,
   Param,
   Post,
   Query,
@@ -12,7 +12,7 @@ import {
   UseFilters,
   UseGuards,
   UseInterceptors
-} from '@nestjs/common';
+} from "@nestjs/common";
 import { AppService } from './app.service';
 import { Response } from 'express';
 import { LoginGuard } from './common/guards/login.guard';
@@ -49,7 +49,7 @@ export class AppController {
   @Public()
   @Get('login')
   loginPage(@Request() req, @Res() res: Response) {
-    if (req.user) return res.redirect('/');
+    if (req.user) return res.redirect('/powietrze');
     else
       return res.render('pages/login', {
         title: 'Logowanie',
@@ -58,23 +58,24 @@ export class AppController {
   }
 
   @Public()
+  // Węzęł końcowy (endpoint) służący do uwierzytelnienia
   @UseGuards(LoginGuard)
   @Post('login')
   login(@Res() res: Response) {
-    res.redirect('/');
+    res.redirect('/powietrze');
   }
 
   @Public()
   @Get('register')
   register(@Request() req, @Res() res: Response) {
-    if (req.user) return res.redirect('/');
+    if (req.user) return res.redirect('/powietrze');
     else return res.render('pages/register', { title: 'Rejestracja' });
   }
 
   @Get('logout')
   logout(@Request() req, @Res() res: Response) {
     req.logout();
-    res.redirect('/login');
+    res.redirect('/powietrze/login');
   }
 
   // stations
@@ -97,23 +98,6 @@ export class AppController {
     const station = await this.appService.getStation(+id);
     return { title: `Szczegóły stacji ${station.number}`, station, user };
   }
-
-  // @Get('stations/:id/series')
-  // @Render('pages/stations/show')
-  // async showStationSeries(
-  //   @Param('id') id: string,
-  //   @Query() query: string,
-  //   @User() user: UserEntity,
-  // ) {
-  //   const station = await this.appService.getStation(+id);
-  //   const chosenSeries = await this.appService.getSeries(+id, query);
-  //   return {
-  //     title: `Szczegóły stacji ${station.number}`,
-  //     station,
-  //     chosenSeries,
-  //     user,
-  //   };
-  // }
 
   @Get('stations/:id/edit')
   @Render('pages/stations/edit')
@@ -177,21 +161,6 @@ export class AppController {
     return { title: 'Pobieranie danych: OpenWeather', user };
   }
 
-  @Get('download/json')
-  sendJSON(@Res() res: Response) {
-    return res.sendFile(join(__dirname, '..', 'public', 'data.json'));
-  }
-
-  @Post('download/json')
-  @HttpCode(200)
-  getJSON(@Res() res: Response, @Body() body: string) {
-    fs.writeFileSync(
-      join(__dirname, '..', 'public', 'data.json'),
-      JSON.stringify(body),
-    );
-    return;
-  }
-
   // upload
   @Get('upload')
   @Render('pages/files/upload')
@@ -199,6 +168,7 @@ export class AppController {
     return { title: 'Import danych z karty SD', user };
   }
 
+  // Wprowadź dane pomiarowe z pliku do bazy danych (jeżeli rozszerzenie to "txt")
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {

@@ -1,37 +1,37 @@
 aside.main-sidebar.sidebar-light-primary
-    a.brand-link.bg-dark.text-center(href='/')
+    a.brand-link.bg-dark.text-center(href='/powietrze')
         span.brand-text.font-weight-light Panel administracyjny
     .sidebar
         nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
                 li.nav-item
-                    a.nav-link(href='/' class=(indexPage ? 'active' : ''))
+                    a.nav-link(href='/powietrze' class=(indexPage ? 'active' : ''))
                         i.fas.flaticonie.flaticon-home.align-middle
                         p.ml-2 Strona główna
         nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
                 li.nav-header WIZUALIZACJA DANYCH
                     li.nav-item
-                        a.nav-link(href='/route' class=(routePage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/route' class=(routePage ? 'active' : ''))
                             i.fas.fa-route.flaticonie.align-middle
                             p.ml-2 Trasa stacji pomiarowej
                     li.nav-item
-                        a.nav-link(href='/map' class=(mapPage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/map' class=(mapPage ? 'active' : ''))
                             i.fas.fa-map-marked-alt.flaticonie.align-middle
                             p.ml-2 Mapa zanieczyszczeń
         nav.mt-2
             ul.nav.nav-pills.nav-sidebar.flex-column(data-widget='treeview' role='menu' data-accordion='false')
                 li.nav-header ZARZĄDZANIE
                     li.nav-item
-                        a.nav-link(href='/stations' class=(stationsPage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/stations' class=(stationsPage ? 'active' : ''))
                             i.flaticon.flaticon-drone.align-middle
                             p.ml-2 Stacje pomiarowe
                     li.nav-item
-                        a.nav-link(href='/measurements' class=(measurementsPage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/measurements' class=(measurementsPage ? 'active' : ''))
                             i.flaticon.flaticon-data.align-middle
                             p.ml-2 Pomiary
                     li.nav-item
-                        a.nav-link(href='/users' class=(usersPage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/users' class=(usersPage ? 'active' : ''))
                             i.flaticon.flaticon-user.align-middle
                             p.ml-2 Użytkownicy
 
@@ -39,24 +39,24 @@ aside.main-sidebar.sidebar-light-primary
             ul.nav.nav-pills.nav-sidebar.flex-column
                 li.nav-header OPERACJE
                     li.nav-item
-                        a.nav-link(href='/upload' class=(uploadPage ? 'active' : ''))
+                        a.nav-link(href='/powietrze/upload' class=(uploadPage ? 'active' : ''))
                             i.fas.fa-sd-card.flaticonie.align-middle
                             p.ml-2 Import z karty SD
-                    li.nav-item.menu-open
-                        a.nav-link
+                    li.nav-item.menu-open.border.border-primary
+                        a.nav-link.bg-transparent
                             i.fas.fa-file-download.flaticonie.align-middle
                             p.ml-2 Pobieranie danych
-                            i.fas.fa-angle-left.right
+                            //i.fas.fa-angle-left.right
                         ul.nav.nav-treeview
                             li.nav-item
-                                a.nav-link(href='/download/airly' class=(airlyPage ? 'active bg-primary' : ''))
+                                a.nav-link(href='/powietrze/download/airly' class=(airlyPage ? 'active bg-primary' : ''))
                                     i.far.fa-circle.nav-icon
                                     p Airly
                             li.nav-item
-                                a.nav-link(href='/download/aqi' class=(aqiPage ? 'active bg-primary' : ''))
+                                a.nav-link(href='/powietrze/download/aqi' class=(aqiPage ? 'active bg-primary' : ''))
                                     i.far.fa-circle.nav-icon
                                     p AQI
                             li.nav-item
-                                a.nav-link(href='/download/openweather' class=(openweatherPage ? 'active bg-primary' : ''))
+                                a.nav-link(href='/powietrze/download/openweather' class=(openweatherPage ? 'active bg-primary' : ''))
                                     i.far.fa-circle.nav-icon
                                     p OpenWeather

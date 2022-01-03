@@ -54,10 +54,10 @@ append body-files
 
         $.ajax({
           type: 'PUT',
-          url: '/api/users/' + user.id,
+          url: '/powietrze/api/users/' + user.id,
           data,
           success: () => {
-            window.location.href='/profile'
+            window.location.href='/powietrze/profile'
           },
           error: () => {
             toastr.error('Wystąpił błąd.');

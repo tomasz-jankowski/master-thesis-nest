@@ -1,17 +1,40 @@
+script(src='/js/moment-with-locales.js')
 script(src='/js/jquery.dataTables.min.js')
 script(src='/js/dataTables.bootstrap4.min.js')
+script(src='/js/dataTables.buttons.min.js')
+script(src='/js/buttons.bootstrap4.min.js')
+script(src='/js/jszip.min.js')
+script(src='/js/pdfmake.min.js')
+script(src='/js/vfs_fonts.js')
+script(src='/js/buttons.html5.min.js')
+script(src='/js/buttons.print.min.js')
+script(src='/js/buttons.colVis.min.js')
 script(src='/js/dataTables.fixedColumns.min.js')
 script(src='/js/dataTables.responsive.min.js')
 script(src='/js/responsive.bootstrap4.min.js')
 script(src='/js/dataTables.searchBuilder.min.js')
 script(src='/js/searchBuilder.bootstrap4.min.js')
+script(src='/js/dataTables.select.min.js')
+script(src='/js/dataTables.dateTime.min.js')
+script(src='/js/datetime-moment.js')
 script.
     $(document).ready(function() {
 
       const options = {
-        dom: 'Qlfrtip',
+        dom: 'QBlfrtip',
         language: {
-          url: '/js/pl.json'
+          url: '/js/pl.json',
+          buttons: {
+            selectAll: "Zaznacz wszystkie",
+            selectNone: "Odznacz wszystkie",
+          }
+        },
+        buttons: [
+          'selectAll',
+          'selectNone',
+        ],
+        select: {
+          style: 'multi'
         },
         aLengthMenu: [
           [5, 10, 15, 20, 50, 100, -1],
@@ -49,14 +72,17 @@ script.
           ...options,
         });
 
-        $('table tbody').on('click', 'button.show', function() {
+      table.buttons().container().appendTo($('.col-sm-6:eq(0)', table.table().container()));
+
+
+      $('table tbody').on('click', 'button.show', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/stations/${data.id}`;
+          window.location.href = `/powietrze/stations/${data.id}`;
         });
 
         $('table tbody').on('click', 'button.edit', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/stations/${data.id}/edit`;
+          window.location.href = `/powietrze/stations/${data.id}/edit`;
         });
 
         $('table tbody').on('click', 'button.delete', function() {
@@ -65,9 +91,9 @@ script.
           if (confirm('Czy na pewno usunąć stację wraz ze wszystkimi pomiarami? \r\nSpowoduje to odświeżenie strony!')) {
             $.ajax({
               type: 'DELETE',
-              url: '/api/stations/' + data.id,
+              url: '/powietrze/api/stations/' + data.id,
               success: () => {
-                window.location.href = '/stations'
+                window.location.href = '/powietrze/stations'
               },
               error: () => {
                 toastr.error('Wystąpił błąd.');

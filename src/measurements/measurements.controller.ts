@@ -15,6 +15,7 @@ import { Public } from '../common/decorators/public.decorator';
 export class MeasurementsController {
   constructor(private readonly measurementsService: MeasurementsService) {}
 
+  // Węzęł końcowy (endpoint) ustawiony jako publiczny, żeby pomiary mogły spływać ze stacji bez uwierzytelniania do serwera (uwierzytelnienie niemożliwe do zrealizowanie na modułach GSM)
   @Public()
   @Post()
   async create(@Body() data, @Req() req?) {

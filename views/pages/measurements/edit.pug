@@ -98,10 +98,10 @@ append body-files
           const data = form.serializeJSON();
           $.ajax({
             type: 'PUT',
-            url: '/api/measurements/' + measurement.id,
+            url: '/powietrze/api/measurements/' + measurement.id,
             data,
             success: () => {
-              window.location.href='/measurements'
+              window.location.href='/powietrze/measurements'
             },
             error: () => {
               toastr.error('Wystąpił błąd.');

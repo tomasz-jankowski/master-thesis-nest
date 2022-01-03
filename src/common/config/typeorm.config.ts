@@ -1,3 +1,5 @@
+// Konfiguracja bazy danych - dane pobierane są ze zmiennych procesowych ("process.env.X")
+
 const options: any = {
   type: 'mysql',
   host: process.env.DB_HOST,

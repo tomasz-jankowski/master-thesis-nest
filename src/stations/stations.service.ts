@@ -13,14 +13,17 @@ export class StationsService {
     private stationsRepository: Repository<Station>,
   ) {}
 
+  // Utwórz nową stację pomiarową podając jej numer
   async createWithNumber(number: number) {
     return await this.stationsRepository.save({ number });
   }
 
+  // Znajdź wszystkie stacje pomiarowe wraz z pomiarami
   async findAll() {
     return await this.stationsRepository.find({ relations: ['measurements'] });
   }
 
+  // Utwórz stację pomiarową, gdzie argumentem jest DTO
   async create(createStationDto: CreateStationDto) {
     if (createStationDto['isActive'])
       createStationDto['isActive'] = createStationDto['isActive'] === 'true';
@@ -30,12 +33,14 @@ export class StationsService {
     });
   }
 
+  // Znajdź jedną stację pomiarową wraz z pomiarami
   async findOne(id: number) {
     return await this.stationsRepository.findOne(id, {
       relations: ['measurements'],
     });
   }
 
+  // Znajdź jedną stację pomiarową wraz z pomiarami na podstawie jej numeru
   async findByNumber(number: number) {
     return await this.stationsRepository
       .createQueryBuilder('station')
@@ -43,6 +48,7 @@ export class StationsService {
       .getOne();
   }
 
+  // Zaktualizuj rekord stacji pomiarowej
   async update(id: number, updateStationDto: UpdateStationDto) {
     updateStationDto['isActive'] = updateStationDto['isActive'] === 'true';
     updateStationDto['isRegistered'] =
@@ -50,6 +56,7 @@ export class StationsService {
     return await this.stationsRepository.update(id, updateStationDto);
   }
 
+  // To samo co przed chwilą, do sprawdzenia czy jest używane
   async patch(id: number, patchStationDto: PatchStationDto) {
     if (patchStationDto['isActive'])
       patchStationDto['isActive'] = patchStationDto['isActive'] === 'true';
@@ -59,10 +66,12 @@ export class StationsService {
     return await this.stationsRepository.update(id, patchStationDto);
   }
 
+  // Usuń stację pomiarową
   async remove(id: number) {
     return await this.stationsRepository.delete(id);
   }
 
+  // Funkcja pomocnicza - jeżeli stacja o takim numerze istnieje to ją znajdź i zwróć, w przeciwnym wypadku utwórz nową
   async findOrCreate(number: string) {
     const station = await this.findByNumber(+number);
     if (station) return station;

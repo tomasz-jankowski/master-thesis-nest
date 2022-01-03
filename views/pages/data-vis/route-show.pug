@@ -45,7 +45,7 @@ append content
                                             th Data serii pomiarowej
                                             th Akcja
                                     tbody
-                                        - var series = [...new Set(station.measurements.map(item => `${item.series} (${item.date.toLocaleDateString()})`))];
+                                        - var series = [...new Set(station.measurements.map(item => `${item.series} (${new Date(item.date).toLocaleDateString("pl-PL")})`))];
                                         each s in series
                                           tr
                                             td= s
@@ -53,10 +53,10 @@ append content
                                             td= s.split(' ')[1].replace(/[\(\)]/g, '')
                                             td
                                                 if s.split(' ')[1].replace(/[\(\)]/g, '').split('.')[0].length === 1
-                                                    a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%280${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
+                                                    a.btn.btn-dark(href=`/powietrze/route/${station.id}/series?series=${s.split(' ')[0]}+%280${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
                                                         | Pokaż
                                                 else
-                                                    a.btn.btn-dark(href=`/route/${station.id}/series?series=${s.split(' ')[0]}+%28${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
+                                                    a.btn.btn-dark(href=`/powietrze/route/${station.id}/series?series=${s.split(' ')[0]}+%28${s.split(' ')[1].replace(/[\(\)]/g, '')}%29`)
                                                         | Pokaż
 
                 if chosenSeries
@@ -64,7 +64,7 @@ append content
                         .col.card.bg-light
                             .card-header
                                 h5 Seria pomiarowa
-                                    span.text-primary= ` ${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString()})`
+                                    span.text-primary= ` ${chosenSeries[0].series} (${chosenSeries[0].date.toLocaleDateString("pl-PL")})`
                             .card-body
                                 .map_box#mapid
                                     //.leaflet-bottom.leaflet-right.mr-5.mb-5
@@ -107,7 +107,7 @@ append body-files
 
         $('table tbody').on('click', 'button.show', function() {
           const data = table.row($(this).parents('tr')).data();
-          window.location.href = `/route/${data.id}/series?series=${d.arr[0]}+%28${d.arr[1]}%29`;
+          window.location.href = `/powietrze/route/${data.id}/series?series=${d.arr[0]}+%28${d.arr[1]}%29`;
         });
 
         // MAP
@@ -126,7 +126,7 @@ append body-files
                 'content': ` \
                   ID ${d.id} <br><br> \
                   <b class="text-info">Numer pomiaru:</b> ${d.number} <br> \
-                  <b class="text-info">Data pomiaru:</b> ${new Date(d.date).toLocaleString()} <br> \
+                  <b class="text-info">Data pomiaru:</b> ${new Date(d.date).toLocaleString("pl-PL")} <br> \
                   <b class="text-info">Długość geogr.:</b> ${d.latitude} <br> \
                   <b class="text-info">Szerokość geogr.:</b> ${d.longitude} <br> \
                   <b class="text-info">Wys. bezwzględna:</b> ${d.altitude} <br> \

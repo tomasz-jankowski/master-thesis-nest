@@ -34,10 +34,10 @@ append body-files
           const data = form.serializeJSON();
           $.ajax({
             type: 'POST',
-            url: '/api/stations',
+            url: '/powietrze/api/stations',
             data,
             success: () => {
-              window.location.href='/stations'
+              window.location.href='/powietrze/stations'
             },
             error: () => {
               toastr.error('Wystąpił błąd.');

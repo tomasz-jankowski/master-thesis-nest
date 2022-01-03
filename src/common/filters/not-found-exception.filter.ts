@@ -1,3 +1,5 @@
+// Jeżeli wystąpi wyhątek "NotFoundException" (kod HTTP 404), to przekieruj na stronę główną ("/")
+
 import {
   ArgumentsHost,
   Catch,
@@ -11,6 +13,7 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    response.redirect('/');
+    // Tutaj następuje przekierowanie
+    response.redirect('/powietrze');
   }
 }
